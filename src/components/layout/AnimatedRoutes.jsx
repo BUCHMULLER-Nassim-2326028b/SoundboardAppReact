@@ -59,8 +59,11 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
   };
 
   const handleDragEnd = (event, info) => {
-    const swipeThreshold = window.innerWidth / 3.5;
-    if (info.offset.x > swipeThreshold || info.velocity.x > 300) {
+    // Exige un slide d'au moins 70% de l'écran pour déclencher le retour
+    const swipeThreshold = window.innerWidth * 0.70;
+    
+    // On retire la vérification de vélocité faible pour forcer le snap back en dessous de 70%
+    if (info.offset.x > swipeThreshold || info.velocity.x > 1200) {
       navigate(tabBase || '/');
     }
   };
