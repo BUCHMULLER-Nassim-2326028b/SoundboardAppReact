@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion, useDragControls, useAnimation } from 'framer-motion';
+import { AnimatePresence, motion, useDragControls } from 'framer-motion';
 import HomePage from '../../pages/HomePage';
 import SoundsPage from '../../pages/SoundsPage';
 import SoundListPage from '../../pages/SoundListPage';
@@ -50,12 +50,7 @@ function TabPage({ children }) {
 function DeepPage({ children, isTabSwitch, tabBase }) {
   const navigate = useNavigate();
   const dragControls = useDragControls();
-  const controls = useAnimation();
-
-  // Manually trigger the 'in' animation on mount since we are using controls
-  useEffect(() => {
-    controls.start('in');
-  }, [controls]);
+  const [constraints, setConstraints] = useState({ left: 0 });
 
   // Only start drag if pointer is on the left edge (iOS edge swipe)
   const startDrag = (event) => {
@@ -68,12 +63,14 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
     const swipeThreshold = window.innerWidth * 0.50;
     
     if (info.offset.x > swipeThreshold || info.velocity.x > 1200) {
-      // Swipe successful: navigate away! 
-      // The exit animation will take over and perfectly inherit the finger's velocity.
+      // Swipe successful: navigate away!
+      // Velocity is perfectly inherited because there is no right constraint.
       navigate(tabBase || '/');
     } else {
-      // Swipe failed: snap back manually!
-      controls.start('in');
+      // Swipe failed: dynamically apply a right constraint to force a snap back
+      setConstraints({ left: 0, right: 0 });
+      // Remove it shortly after so the next drag is free
+      setTimeout(() => setConstraints({ left: 0 }), 500);
     }
   };
 
@@ -81,17 +78,18 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
     <motion.div
       custom={isTabSwitch}
       initial="initial"
-      animate={controls}
+      animate="in"
       exit="out"
       variants={deepVariants}
       drag="x"
       dragControls={dragControls}
       dragListener={false} // Disable dragging from anywhere
       onPointerDown={startDrag}
-      // No right constraint! This prevents the automatic snap-back from killing momentum
-      dragConstraints={{ left: 0 }}
+      dragConstraints={constraints}
       dragElastic={1} // 1:1 finger tracking, no rubber banding resistance
       onDragEnd={handleDragEnd}
+      // Extremely snappy return if the drag fails and it snaps to constraints
+      dragTransition={{ bounceStiffness: 600, bounceDamping: 60 }}
       style={{
         position: 'fixed',
         top: 0,
