@@ -15,7 +15,7 @@ const tabVariants = {
 /* Ultra-Snappy Transitions */
 const deepVariants = {
   initial: (isTabSwitch) => isTabSwitch ? { opacity: 1, x: 0 } : { x: '100%' },
-  in: (isTabSwitch) => isTabSwitch 
+  in: (isTabSwitch) => isTabSwitch
     ? { x: 0, opacity: 1, transition: { duration: 0 } }
     : { x: 0, transition: { type: 'spring', damping: 28, stiffness: 350, mass: 0.5 } },
   out: (isTabSwitch) => isTabSwitch
@@ -59,9 +59,9 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
   };
 
   const handleDragEnd = (event, info) => {
-    // Exige un slide d'au moins 70% de l'écran pour déclencher le retour
-    const swipeThreshold = window.innerWidth * 0.70;
-    
+    // Exige un slide d'au moins 50% de l'écran pour déclencher le retour
+    const swipeThreshold = window.innerWidth * 0.50;
+
     // On retire la vérification de vélocité faible pour forcer le snap back en dessous de 70%
     if (info.offset.x > swipeThreshold || info.velocity.x > 1200) {
       navigate(tabBase || '/');
@@ -101,6 +101,7 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={{ left: 0, right: 0.8 }}
       dragSnapToOrigin={true}
+      dragTransition={{ bounceStiffness: 600, bounceDamping: 35 }}
       onDragEnd={handleDragEnd}
     >
       {children}
@@ -113,7 +114,7 @@ export default function AnimatedRoutes() {
 
   const segments = location.pathname.split('/').filter(Boolean);
   const currentTabBase = segments.length > 0 ? `/${segments[0]}` : '/';
-  
+
   const prevTabRef = useRef(currentTabBase);
   const isTabSwitch = prevTabRef.current !== currentTabBase;
 
