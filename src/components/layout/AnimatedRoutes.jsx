@@ -49,6 +49,9 @@ function TabPage({ children }) {
 
 import { usePresence, animate, useMotionValue } from 'framer-motion';
 
+// Global state to bypass AnimatePresence freezing old props on exit!
+const routingState = { isTabSwitch: false };
+
 function DeepPage({ children, isTabSwitch, tabBase }) {
   const navigate = useNavigate();
   const dragControls = useDragControls();
@@ -65,7 +68,8 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
         animate(x, 0, { type: 'spring', damping: 40, stiffness: 500, mass: 0.5 });
       }
     } else {
-      if (isTabSwitch) {
+      // Read from the global mutable state because AnimatePresence freezes the local 'isTabSwitch' prop!
+      if (routingState.isTabSwitch) {
         // Instant unmount if we are just switching tabs
         x.set(window.innerWidth);
         safeToRemove();
@@ -152,9 +156,12 @@ export default function AnimatedRoutes() {
 
   const segments = location.pathname.split('/').filter(Boolean);
   const currentTabBase = segments.length > 0 ? `/${segments[0]}` : '/';
-
+  
   const prevTabRef = useRef(currentTabBase);
   const isTabSwitch = prevTabRef.current !== currentTabBase;
+  
+  // Update the mutable global state instantly for exiting components
+  routingState.isTabSwitch = isTabSwitch;
 
   useEffect(() => {
     prevTabRef.current = currentTabBase;
