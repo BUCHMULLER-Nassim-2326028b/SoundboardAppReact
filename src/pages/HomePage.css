@@ -7,18 +7,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  height: 100dvh;
-  height: -webkit-fill-available;
-  max-height: 100dvh;
-  max-height: -webkit-fill-available;
-  gap: 12px;
+  min-height: 100%;
+  flex: 1;
+  gap: 14px;
   width: 100%;
-  max-width: 440px;
+  max-width: 420px;
   margin: 0 auto;
-  padding: calc(env(safe-area-inset-top, 0px) + 14px) var(--space-md) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 12px) !important;
+  padding: calc(env(safe-area-inset-top, 0px) + 20px) var(--space-md) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 24px) !important;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 /* ---------- Clean Logo Image ---------- */
@@ -35,8 +31,8 @@
 
 .home-logo-img {
   width: 100%;
-  max-width: 350px;
-  max-height: 58px;
+  max-width: 320px;
+  max-height: 52px;
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
@@ -55,7 +51,7 @@
 
 .home-actus-card {
   width: 100%;
-  height: 165px;
+  height: 155px;
   border-radius: 14px;
   border: 3px solid #ffffff;
   background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 40%, #172554 100%);
@@ -271,14 +267,4 @@
   padding: 2px 6px;
   border-radius: 999px;
   border: 1px solid rgba(250, 204, 21, 0.3);
-}
-
-/* Fallback for smaller screens */
-@media (max-height: 620px) {
-  .home-page {
-    height: auto;
-    min-height: 100dvh;
-    max-height: none;
-    overflow-y: auto;
-  }
 }
