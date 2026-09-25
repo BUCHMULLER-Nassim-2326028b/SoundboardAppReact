@@ -114,6 +114,12 @@ export default function BottomNav() {
   const tabRefs = useRef([]);
   const tabsGeometryRef = useRef([]);
 
+  // iOS Style Tab History: Remember deep links per tab!
+  const tabHistoryRef = useRef({});
+  useEffect(() => {
+    tabHistoryRef.current[activeIndex] = location.pathname;
+  }, [location.pathname, activeIndex]);
+
   // Cache tab geometry to prevent forced synchronous reflows during 60/120fps drag & slide
   const measureTabs = useCallback(() => {
     if (!navInnerRef.current) return [];
@@ -379,9 +385,18 @@ export default function BottomNav() {
     // Smoothly glide pill to target position with spring transition
     glidePillToIndex(targetIndex, true);
 
-    // Navigate to target if different
-    if (TABS[targetIndex] && targetIndex !== activeIndex) {
-      navigate(TABS[targetIndex].to);
+    // Navigate to target if different or pop to root if same!
+    if (TABS[targetIndex]) {
+      if (targetIndex !== activeIndex) {
+        // Restore previous deep route for this tab, or go to its root
+        const targetPath = tabHistoryRef.current[targetIndex] || TABS[targetIndex].to;
+        navigate(targetPath);
+      } else {
+        // iOS pop-to-root: if we click the active tab, we go back to its root
+        if (location.pathname !== TABS[targetIndex].to) {
+          navigate(TABS[targetIndex].to);
+        }
+      }
     }
   };
 
