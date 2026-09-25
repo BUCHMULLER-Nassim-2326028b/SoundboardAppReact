@@ -181,7 +181,7 @@ html {
   -webkit-tap-highlight-color: transparent;
   overflow-x: hidden;
   height: 100%;
-  height: -webkit-fill-available;
+  height: 100dvh;
   background: #010c22;
 }
 
@@ -189,29 +189,23 @@ body {
   font-family: var(--font-body);
   color: var(--color-text-primary);
   background: transparent;
-  min-height: 100vh;
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
+  height: 100%;
   overflow-x: hidden;
   line-height: 1.5;
+  margin: 0;
 }
 
 #root {
-  min-height: 100vh;
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
+  height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
-  background: transparent;
 }
 
 .app-shell {
   position: relative;
   width: 100%;
-  min-height: 100vh;
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
+  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -223,6 +217,9 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 a {
@@ -307,6 +304,7 @@ select {
   max-width: 480px;
   margin: 0 auto;
   box-sizing: border-box;
+  min-height: 0;
 }
 
 .page-header {
