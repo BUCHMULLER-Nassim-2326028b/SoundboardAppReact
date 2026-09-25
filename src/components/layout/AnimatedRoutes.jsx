@@ -90,37 +90,49 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
   };
 
   return (
-    <motion.div
-      style={{
-        x,
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 9999,
-        background: 'rgba(1, 12, 34, 0.75)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
-        paddingTop: 'max(1.5rem, env(safe-area-inset-top, 2rem))',
-        paddingLeft: 'env(safe-area-inset-left, 0px)',
-        paddingRight: 'env(safe-area-inset-right, 0px)',
-        paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 1rem))',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        WebkitOverflowScrolling: 'touch',
-        touchAction: 'pan-y',
+    <div 
+      style={{ 
+        position: 'fixed', 
+        inset: 0, 
+        zIndex: 9999 
       }}
-      drag="x"
-      dragControls={dragControls}
-      dragListener={false}
-      onPointerDown={startDrag}
-      dragConstraints={{ left: 0 }}
-      dragElastic={1}
-      onDragEnd={handleDragEnd}
+      // This wrapper NEVER slides. It stays fixed to catch any clicks during the swipe!
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
     >
-      {children}
-    </motion.div>
+      <motion.div
+        style={{
+          x,
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          background: 'rgba(1, 12, 34, 0.75)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          paddingTop: 'max(1.5rem, env(safe-area-inset-top, 2rem))',
+          paddingLeft: 'env(safe-area-inset-left, 0px)',
+          paddingRight: 'env(safe-area-inset-right, 0px)',
+          paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 1rem))',
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          WebkitOverflowScrolling: 'touch',
+          touchAction: 'pan-y',
+        }}
+        drag="x"
+        dragControls={dragControls}
+        dragListener={false}
+        onPointerDown={startDrag}
+        dragConstraints={{ left: 0 }}
+        dragElastic={1}
+        onDragEnd={handleDragEnd}
+      >
+        {children}
+      </motion.div>
+    </div>
   );
 }
 
