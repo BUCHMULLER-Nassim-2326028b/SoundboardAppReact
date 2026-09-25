@@ -47,12 +47,31 @@ function TabPage({ children }) {
   );
 }
 
+import { usePresence, animate, useMotionValue } from 'framer-motion';
+
 function DeepPage({ children, isTabSwitch, tabBase }) {
   const navigate = useNavigate();
   const dragControls = useDragControls();
-  const [constraints, setConstraints] = useState({ left: 0 });
+  const [isPresent, safeToRemove] = usePresence();
+  const x = useMotionValue(window.innerWidth);
 
-  // Only start drag if pointer is on the left edge (iOS edge swipe)
+  useEffect(() => {
+    if (isPresent) {
+      // Animate In
+      animate(x, 0, { type: 'spring', damping: 28, stiffness: 350, mass: 0.5 });
+    } else {
+      // Animate Out
+      animate(x, window.innerWidth, { 
+        type: 'spring', 
+        damping: 28, 
+        stiffness: 350, 
+        mass: 0.5,
+        velocity: x.getVelocity(), // Perfect momentum inheritance!
+        onComplete: safeToRemove // Tell AnimatePresence it's done
+      });
+    }
+  }, [isPresent, safeToRemove, x]);
+
   const startDrag = (event) => {
     if (event.clientX <= 45) {
       dragControls.start(event);
@@ -63,34 +82,18 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
     const swipeThreshold = window.innerWidth * 0.50;
     
     if (info.offset.x > swipeThreshold || info.velocity.x > 1200) {
-      // Swipe successful: navigate away!
-      // Velocity is perfectly inherited because there is no right constraint.
+      // Trigger navigation, which sets isDeepPage=false and triggers usePresence exit
       navigate(tabBase || '/');
     } else {
-      // Swipe failed: dynamically apply a right constraint to force a snap back
-      setConstraints({ left: 0, right: 0 });
-      // Remove it shortly after so the next drag is free
-      setTimeout(() => setConstraints({ left: 0 }), 500);
+      // Snap back if threshold not met
+      animate(x, 0, { type: 'spring', bounceDamping: 60, bounceStiffness: 600 });
     }
   };
 
   return (
     <motion.div
-      custom={isTabSwitch}
-      initial="initial"
-      animate="in"
-      exit="out"
-      variants={deepVariants}
-      drag="x"
-      dragControls={dragControls}
-      dragListener={false} // Disable dragging from anywhere
-      onPointerDown={startDrag}
-      dragConstraints={constraints}
-      dragElastic={1} // 1:1 finger tracking, no rubber banding resistance
-      onDragEnd={handleDragEnd}
-      // Extremely snappy return if the drag fails and it snaps to constraints
-      dragTransition={{ bounceStiffness: 600, bounceDamping: 60 }}
       style={{
+        x,
         position: 'fixed',
         top: 0,
         left: 0,
@@ -109,6 +112,13 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
         WebkitOverflowScrolling: 'touch',
         touchAction: 'pan-y',
       }}
+      drag="x"
+      dragControls={dragControls}
+      dragListener={false}
+      onPointerDown={startDrag}
+      dragConstraints={{ left: 0 }}
+      dragElastic={1}
+      onDragEnd={handleDragEnd}
     >
       {children}
     </motion.div>
