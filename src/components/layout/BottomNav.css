@@ -4,7 +4,7 @@
 
 .bottom-nav {
   position: fixed;
-  bottom: max(0.5rem, env(safe-area-inset-bottom, 0.5rem));
+  bottom: max(0.3rem, env(safe-area-inset-bottom, 0.3rem));
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-nav);
