@@ -160,7 +160,7 @@
   --z-toast: 200;
 
   /* Bottom nav height */
-  --nav-height: 32px;
+  --nav-height: 64px;
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
 }
