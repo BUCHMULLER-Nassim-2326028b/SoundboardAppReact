@@ -1,0 +1,186 @@
+/* ============================================
+   Category Card — GameMaker Faithful Style
+   ============================================ */
+
+.category-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 3px solid #ffffff;
+  background: #091332;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+  transform: scale(1.025);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38);
+}
+
+.category-card:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Top Featured Card (Maskass) ---------- */
+.category-card--featured {
+  border-radius: 24px;
+  height: 290px;
+  width: 100%;
+}
+
+.category-card--featured .category-card__artwork {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #b91c1c;
+}
+
+.category-card--featured .category-card__footer {
+  height: 70px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: #0d0d1a;
+}
+
+.category-card--featured .category-card__title {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.85rem;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  line-height: 1;
+}
+
+
+/* ---------- 2-Column Normal Cards ---------- */
+.category-card--normal {
+  border-radius: 20px;
+  height: 220px;
+  width: 100%;
+}
+
+.category-card--normal .category-card__artwork {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #1e3a8a;
+}
+
+.category-card--normal .category-card__footer {
+  height: 64px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: #0a0e24;
+  padding: 4px 6px;
+  box-sizing: border-box;
+}
+
+.category-card--normal .category-card__title {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 1.15;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.category-card__title-line {
+  display: block;
+}
+
+/* ---------- Artwork Image ---------- */
+.category-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ---------- Seamless Flipped & Heavy Blurred Reflection ---------- */
+.category-card__footer-reflection {
+  position: absolute;
+  inset: -20px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.category-card__reflection-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleY(-1) scale(1.2);
+  filter: blur(28px) brightness(0.4) saturate(160%);
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Darkening tint overlay */
+.category-card__footer-tint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(5, 10, 25, 0.65) 0%,
+    rgba(5, 10, 25, 0.4) 60%,
+    rgba(5, 10, 25, 0.15) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ---------- Top Right NOUVEAU Badge ---------- */
+.category-card__badge-wrap {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+.category-card__nouveau-badge {
+  display: inline-block;
+  background: rgba(30, 41, 59, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}

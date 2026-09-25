@@ -1,0 +1,242 @@
+/* ============================================
+   Options Page
+   ============================================ */
+
+.options-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.options-section + .options-section {
+  margin-top: 0;
+}
+
+/* Option Row */
+.option-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.option-row__label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.option-row__control {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex: 1;
+  justify-content: flex-end;
+}
+
+/* Slider */
+.option-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  max-width: 160px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.12);
+  outline: none;
+  cursor: pointer;
+}
+
+.option-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  box-shadow: 0 0 8px var(--color-accent-glow);
+  transition: transform var(--transition-fast);
+}
+
+.option-slider::-webkit-slider-thumb:active {
+  transform: scale(1.2);
+}
+
+.option-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px var(--color-accent-glow);
+}
+
+.option-slider__value {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-accent-light);
+  min-width: 36px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Toggle */
+.option-toggle {
+  position: relative;
+  cursor: pointer;
+}
+
+.option-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.option-toggle__track {
+  display: block;
+  width: 44px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.12);
+  position: relative;
+  transition: background var(--transition-fast);
+}
+
+.option-toggle input:checked + .option-toggle__track {
+  background: var(--color-accent);
+  box-shadow: 0 0 12px var(--color-accent-glow);
+}
+
+.option-toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  transition: transform var(--transition-spring);
+  box-shadow: var(--shadow-sm);
+}
+
+.option-toggle input:checked + .option-toggle__track .option-toggle__thumb {
+  transform: translateX(20px);
+}
+
+/* Stats */
+.option-stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.option-stats__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.option-stats__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.option-stats__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.option-stats__number {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: var(--color-accent-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.option-stats__label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* Actions */
+.option-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.option-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.option-action:hover {
+  color: var(--color-accent-light);
+}
+
+.option-action--danger {
+  color: var(--color-danger);
+}
+
+.option-action--danger:hover {
+  color: #ff6659;
+}
+
+.option-action__divider {
+  height: 1px;
+  background: var(--color-border-light);
+}
+
+/* About */
+.option-about {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-sm);
+}
+
+.option-about__name {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.option-about__desc {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.option-about__tech {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
