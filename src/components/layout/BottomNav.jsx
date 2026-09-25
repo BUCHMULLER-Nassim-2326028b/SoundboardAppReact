@@ -432,7 +432,7 @@ export default function BottomNav() {
               aria-current={idx === activeIndex ? 'page' : undefined}
             >
               <div className="bottom-nav__icon-wrapper">
-                <tab.icon size={22} />
+                <tab.icon size={26} />
               </div>
               <span className="bottom-nav__label">{tab.label}</span>
             </div>
