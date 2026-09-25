@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
-  max-width: 440px;
+  max-width: 27.5rem; /* 440px */
   margin: 0 auto;
   width: 100%;
 }

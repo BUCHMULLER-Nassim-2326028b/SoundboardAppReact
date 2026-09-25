@@ -31,26 +31,26 @@
 /* ---------- 1. Top Featured Card (Banner, Spans 2 Cols) ---------- */
 .category-card--featured {
   grid-column: span 2;
-  --art-height: 250px;
-  border-radius: 36px;
-  height: 320px;
+  --art-height: 15.625rem; /* 250px */
+  border-radius: 2.25rem; /* 36px */
+  height: 20rem; /* 320px */
   width: 100%;
 }
 
 /* ---------- 2. 2-Column Normal Cards ---------- */
 .category-card--normal {
   grid-column: span 1;
-  --art-height: 160px;
-  border-radius: 28px;
-  height: 220px;
+  --art-height: 10rem; /* 160px */
+  border-radius: 1.75rem; /* 28px */
+  height: 13.75rem; /* 220px */
   width: 100%;
 }
 
 /* ---------- 3. 2-Column Petit Cards (Sleek 1-Line Compact Buttons) ---------- */
 .category-card--petit {
   grid-column: span 1;
-  height: 54px;
-  min-height: 54px;
+  height: 3.375rem; /* 54px */
+  min-height: 3.375rem; /* 54px */
   width: 100%;
   border-radius: 20px;
   background: #0d1527;
