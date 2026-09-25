@@ -180,6 +180,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-x: none; /* Disable native swipe to go back on iOS */
   overflow: hidden;
   height: 100vh;
   background: #010c22;
@@ -191,6 +192,7 @@ body {
   background: transparent;
   height: 100vh;
   overflow: hidden;
+  overscroll-behavior-x: none;
   line-height: 1.5;
   margin: 0;
 }

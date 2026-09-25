@@ -246,11 +246,11 @@ export default function BottomNav() {
     setDragCandidateIndex(clickedIndex);
     e.currentTarget.setPointerCapture(e.pointerId);
 
-    // Inflate pill on press with soft, buttery ease (scale 1.24) and glide to target tab immediately
+    // Inflate pill on press with a slower, buttery ease and glide to target tab immediately
     if (pillRef.current) {
       pillRef.current.style.width = `${pillW}px`;
       pillRef.current.style.transition =
-        'transform 0.34s cubic-bezier(0.16, 1, 0.3, 1)';
+        'transform 0.55s cubic-bezier(0.16, 1, 0.3, 1)';
       pillRef.current.style.transform = `translate3d(${targetX}px, 0, 0) scale(1.24, 1.24)`;
     }
 
