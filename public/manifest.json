@@ -4,8 +4,8 @@
   "description": "La soundboard ultime de Savun. Tous les sons iconiques en un clic !",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0e27",
-  "theme_color": "#0a0e27",
+  "background_color": "#010c22",
+  "theme_color": "#010c22",
   "orientation": "portrait",
   "icons": [
     {
