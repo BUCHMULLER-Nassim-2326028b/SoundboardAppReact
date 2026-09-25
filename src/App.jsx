@@ -1,4 +1,4 @@
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import AppShell from './components/layout/AppShell';
 import AnimatedRoutes from './components/layout/AnimatedRoutes';
@@ -10,11 +10,11 @@ import './styles/animations.css';
 export default function App() {
   return (
     <AppProvider>
-      <BrowserRouter>
+      <MemoryRouter>
         <AppShell>
           <AnimatedRoutes />
         </AppShell>
-      </BrowserRouter>
+      </MemoryRouter>
     </AppProvider>
   );
 }

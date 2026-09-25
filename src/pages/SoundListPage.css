@@ -1,6 +1,35 @@
 /* ============================================
-   Sound List Page
+   Sound List Page & Overlay Modal
    ============================================ */
+
+/* The Modal Overlay - Covers the entire screen AND the notch safely! */
+.sound-list-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: rgba(1, 12, 34, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  /* The overlay covers the notch area with its frosted glass, but pads the content down safely */
+  padding-top: max(1.5rem, env(safe-area-inset-top, 2rem));
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1rem));
+  
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+/* Reset inner page padding since overlay handles it */
+.sound-list-overlay .sound-list-page {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
 
 .sound-list-page {
   display: flex;
