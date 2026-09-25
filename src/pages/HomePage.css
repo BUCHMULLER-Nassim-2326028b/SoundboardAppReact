@@ -6,44 +6,31 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  height: 100dvh;
-  max-height: 100dvh;
-  overflow: hidden;
-  gap: clamp(6px, 1.4vh, 14px);
+  justify-content: center;
+  min-height: 100dvh;
+  gap: 12px;
   width: 100%;
-  max-width: 440px;
+  max-width: 400px;
   margin: 0 auto;
-  padding: calc(env(safe-area-inset-top, 0px) + clamp(8px, 1.8vh, 16px)) var(--space-md) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + clamp(4px, 1vh, 10px)) !important;
+  padding: calc(env(safe-area-inset-top, 0px) + 8px) var(--space-md) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 8px) !important;
   box-sizing: border-box;
-}
-
-@media (max-height: 560px) {
-  .home-page {
-    height: auto;
-    min-height: 100dvh;
-    max-height: none;
-    overflow-y: auto;
-    justify-content: flex-start;
-  }
 }
 
 /* ---------- Clean Logo Image ---------- */
 .home-header {
   text-align: center;
   padding-top: 0;
-  margin-bottom: 0;
+  margin-bottom: 2px;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
-  flex-shrink: 0;
 }
 
 .home-logo-img {
-  width: auto;
-  max-width: clamp(230px, 72vw, 320px);
-  max-height: clamp(34px, 5.8vh, 50px);
+  width: 100%;
+  max-width: 280px;
+  max-height: 52px;
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
@@ -57,15 +44,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1.25;
-  min-height: 0;
-  max-height: 185px;
 }
 
 .home-actus-card {
   width: 100%;
-  height: 100%;
-  min-height: 90px;
+  height: 140px;
   border-radius: 16px;
   border: 3px solid #ffffff;
   background: linear-gradient(180deg, #1d4ed8 0%, #1e40af 40%, #172554 100%);
@@ -91,7 +74,7 @@
 .home-actus-text {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(2.4rem, 6.2vh, 4rem);
+  font-size: 3.2rem;
   letter-spacing: 0.05em;
   color: #3b82f6;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
@@ -102,23 +85,21 @@
 .home-card-caption {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(0.78rem, 1.5vh, 0.92rem);
+  font-size: 0.9rem;
   color: #ffffff;
-  margin-top: clamp(3px, 0.6vh, 6px);
+  margin-top: 5px;
   text-align: center;
   letter-spacing: 0.01em;
-  flex-shrink: 0;
 }
 
 /* ---------- Version & Nouveautés Banner ---------- */
 .home-banner-section {
   width: 100%;
-  flex-shrink: 0;
 }
 
 .home-nouveautes-banner {
   width: 100%;
-  height: clamp(54px, 8.2vh, 70px);
+  height: 64px;
   border-radius: 14px;
   border: 3px solid #ffffff;
   background: #091332;
@@ -142,7 +123,7 @@
 }
 
 .home-banner-avatar-wrap {
-  width: clamp(75px, 20vw, 105px);
+  width: 92px;
   height: 100%;
   flex-shrink: 0;
   overflow: hidden;
@@ -163,15 +144,15 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding-left: clamp(8px, 2vw, 12px);
-  padding-right: 12px;
+  padding-left: 10px;
+  padding-right: 14px;
   gap: 1px;
 }
 
 .home-banner-version {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(0.7rem, 1.3vh, 0.82rem);
+  font-size: 0.78rem;
   color: #facc15;
   letter-spacing: 0.05em;
 }
@@ -179,7 +160,7 @@
 .home-banner-title {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(1.2rem, 2.3vh, 1.7rem);
+  font-size: 1.5rem;
   color: #ffffff;
   letter-spacing: 0.03em;
   line-height: 1;
@@ -188,17 +169,13 @@
 /* ---------- Duo Cards (Pinned & Top Sound) ---------- */
 .home-duo-section {
   width: 100%;
-  flex: 1;
-  min-height: 0;
-  max-height: 155px;
 }
 
 .home-duo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: clamp(10px, 3vw, 16px);
+  gap: 14px;
   width: 100%;
-  height: 100%;
 }
 
 .home-duo-col {
@@ -206,14 +183,12 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100%;
-  min-height: 0;
 }
 
 .home-duo-card {
   width: 100%;
-  height: 100%;
-  min-height: 75px;
+  aspect-ratio: 1.25;
+  max-height: 125px;
   border-radius: 18px;
   border: 3px solid #ffffff;
   background: linear-gradient(180deg, #1e3a8a 0%, #172554 45%, #0b1437 100%);
@@ -222,7 +197,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: clamp(6px, 1.2vh, 12px);
+  padding: 8px 12px;
   box-sizing: border-box;
   transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
   -webkit-tap-highlight-color: transparent;
@@ -253,7 +228,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  gap: clamp(2px, 0.6vh, 6px);
+  gap: 4px;
   width: 100%;
 }
 
@@ -264,7 +239,7 @@
 .home-duo-title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(0.75rem, 1.4vh, 0.85rem);
+  font-size: 0.82rem;
   color: #ffffff;
   line-height: 1.15;
   overflow: hidden;
@@ -280,7 +255,7 @@
 }
 
 .home-duo-badge {
-  font-size: clamp(0.65rem, 1.2vh, 0.72rem);
+  font-size: 0.7rem;
   font-weight: 800;
   color: #facc15;
   background: rgba(250, 204, 21, 0.15);
