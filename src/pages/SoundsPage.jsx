@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import './SoundsPage.css';
@@ -7,9 +7,17 @@ import CategoryCard from '../components/ui/CategoryCard';
 import SoundListPage from './SoundListPage';
 import { DeepPage } from '../components/layout/AnimatedRoutes';
 
-export default function SoundsPage() {
+export default function SoundsPage({ isActive = true }) {
   const categories = soundsData.categories;
   const location = useLocation();
+  const lastActiveLocation = useRef(location);
+
+  // Freeze the routing state when the tab is inactive!
+  // This ensures DeepPage NEVER unmounts during a tab switch, achieving a true 100% native savestate.
+  if (isActive) {
+    lastActiveLocation.current = location;
+  }
+  const frozenLocation = lastActiveLocation.current;
 
   // Ensure featured categories are ALWAYS at the top, then normal, then petit
   const sortedCategories = useMemo(() => {
@@ -19,8 +27,8 @@ export default function SoundsPage() {
     return [...featured, ...normal, ...petit];
   }, [categories]);
 
-  // Check if we are inside a deep route
-  const isDeepRoute = location.pathname.startsWith('/sons/') && location.pathname !== '/sons';
+  // Check against the frozen location to avoid unmounting when inactive
+  const isDeepRoute = frozenLocation.pathname.startsWith('/sons/') && frozenLocation.pathname !== '/sons';
 
   return (
     <>
@@ -45,9 +53,9 @@ export default function SoundsPage() {
 
       <AnimatePresence>
         {isDeepRoute && (
-          <Routes location={location} key="sounds-deep-route">
+          <Routes location={frozenLocation} key="sounds-deep-route">
             <Route 
-              path=":categoryId" 
+              path="/sons/:categoryId" 
               element={
                 <DeepPage tabBase="/sons">
                   <SoundListPage />
