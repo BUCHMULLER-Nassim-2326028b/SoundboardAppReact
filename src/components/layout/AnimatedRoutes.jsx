@@ -101,7 +101,7 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={{ left: 0, right: 0.8 }}
       dragSnapToOrigin={true}
-      dragTransition={{ bounceStiffness: 600, bounceDamping: 35 }}
+      dragTransition={{ bounceStiffness: 600, bounceDamping: 60 }}
       onDragEnd={handleDragEnd}
     >
       {children}
