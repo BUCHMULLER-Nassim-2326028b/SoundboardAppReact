@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useDragControls } from 'framer-motion';
 import HomePage from '../../pages/HomePage';
 import SoundsPage from '../../pages/SoundsPage';
 import SoundListPage from '../../pages/SoundListPage';
@@ -12,15 +12,15 @@ const tabVariants = {
   out: { opacity: 0, transition: { duration: 0 } },
 };
 
-/* Fast Tween Transitions for Deep Pages - NO FLOATY SPRINGS */
+/* Ultra-Snappy Transitions */
 const deepVariants = {
   initial: (isTabSwitch) => isTabSwitch ? { opacity: 1, x: 0 } : { x: '100%' },
   in: (isTabSwitch) => isTabSwitch 
     ? { x: 0, opacity: 1, transition: { duration: 0 } }
-    : { x: 0, transition: { type: 'tween', ease: 'easeOut', duration: 0.25 } },
+    : { x: 0, transition: { type: 'spring', damping: 28, stiffness: 350, mass: 0.5 } },
   out: (isTabSwitch) => isTabSwitch
     ? { opacity: 0, x: 0, transition: { duration: 0 } }
-    : { x: '100%', transition: { type: 'tween', ease: 'easeIn', duration: 0.2 } },
+    : { x: '100%', transition: { type: 'spring', damping: 28, stiffness: 350, mass: 0.5 } },
 };
 
 function TabPage({ children }) {
@@ -49,9 +49,17 @@ function TabPage({ children }) {
 
 function DeepPage({ children, isTabSwitch, tabBase }) {
   const navigate = useNavigate();
+  const dragControls = useDragControls();
+
+  // Only start drag if pointer is on the left edge (iOS edge swipe)
+  const startDrag = (event) => {
+    if (event.clientX <= 45) {
+      dragControls.start(event);
+    }
+  };
 
   const handleDragEnd = (event, info) => {
-    const swipeThreshold = window.innerWidth / 3;
+    const swipeThreshold = window.innerWidth / 3.5;
     if (info.offset.x > swipeThreshold || info.velocity.x > 300) {
       navigate(tabBase || '/');
     }
@@ -64,6 +72,10 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
       animate="in"
       exit="out"
       variants={deepVariants}
+      drag="x"
+      dragControls={dragControls}
+      dragListener={false} // Disable dragging from anywhere
+      onPointerDown={startDrag}
       style={{
         position: 'fixed',
         top: 0,
@@ -83,7 +95,6 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
         WebkitOverflowScrolling: 'touch',
         touchAction: 'pan-y',
       }}
-      drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={{ left: 0, right: 0.8 }}
       dragSnapToOrigin={true}
