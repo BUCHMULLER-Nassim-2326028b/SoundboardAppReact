@@ -4,12 +4,12 @@
 
 .bottom-nav {
   position: fixed;
-  bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+  bottom: max(0.5rem, env(safe-area-inset-bottom, 0.5rem));
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-nav);
-  width: calc(100% - var(--space-xl) * 2);
-  max-width: 380px;
+  width: calc(100% - 2rem);
+  max-width: 24rem;
   pointer-events: auto;
   touch-action: none;
 }
@@ -18,7 +18,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   align-items: center;
-  height: 62px;
+  height: 4rem;
   position: relative;
   overflow: visible;
 

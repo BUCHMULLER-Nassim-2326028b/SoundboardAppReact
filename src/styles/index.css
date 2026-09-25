@@ -175,7 +175,8 @@
 }
 
 html {
-  font-size: 16px;
+  /* Fluid typography: 15px minimum, scales slowly with viewport width, caps at 18px */
+  font-size: clamp(15px, 1.2vw + 11px, 18px);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
