@@ -19,8 +19,7 @@ export function NativeTab({ children, isActive }) {
       style={{
         position: 'absolute',
         inset: 0,
-        display: 'flex',
-        flexDirection: 'column',
+        display: 'block',
         width: '100%',
         height: '100%',
         overflowY: 'auto',

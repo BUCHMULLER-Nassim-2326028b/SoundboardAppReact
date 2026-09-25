@@ -304,13 +304,12 @@ select {
 
 /* ---------- Layout ---------- */
 .page {
-  flex: 1;
+  min-height: 100%;
   padding: var(--space-md) var(--space-md) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + var(--space-lg));
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
   box-sizing: border-box;
-  min-height: 0;
 }
 
 .page-header {
