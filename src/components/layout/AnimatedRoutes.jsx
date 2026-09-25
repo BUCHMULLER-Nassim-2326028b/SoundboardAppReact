@@ -57,17 +57,17 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
 
   useEffect(() => {
     if (isPresent) {
-      // Animate In
-      animate(x, 0, { type: 'spring', damping: 28, stiffness: 350, mass: 0.5 });
+      // Animate In - Ultra sharp, zero bounce
+      animate(x, 0, { type: 'spring', damping: 40, stiffness: 500, mass: 0.5 });
     } else {
-      // Animate Out
+      // Animate Out - Inherits velocity, zero floaty bounce
       animate(x, window.innerWidth, { 
         type: 'spring', 
-        damping: 28, 
-        stiffness: 350, 
+        damping: 40, 
+        stiffness: 500, 
         mass: 0.5,
-        velocity: x.getVelocity(), // Perfect momentum inheritance!
-        onComplete: safeToRemove // Tell AnimatePresence it's done
+        velocity: x.getVelocity(),
+        onComplete: safeToRemove
       });
     }
   }, [isPresent, safeToRemove, x]);
@@ -82,11 +82,10 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
     const swipeThreshold = window.innerWidth * 0.50;
     
     if (info.offset.x > swipeThreshold || info.velocity.x > 1200) {
-      // Trigger navigation, which sets isDeepPage=false and triggers usePresence exit
       navigate(tabBase || '/');
     } else {
-      // Snap back if threshold not met
-      animate(x, 0, { type: 'spring', bounceDamping: 60, bounceStiffness: 600 });
+      // Snap back - Critically damped, absolutely NO BOUNCE
+      animate(x, 0, { type: 'spring', damping: 50, stiffness: 600, mass: 0.5 });
     }
   };
 
