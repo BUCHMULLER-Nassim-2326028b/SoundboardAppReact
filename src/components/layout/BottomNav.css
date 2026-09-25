@@ -4,7 +4,8 @@
 
 .bottom-nav {
   position: fixed;
-  bottom: max(env(safe-area-inset-bottom));
+  /* On iOS, safe-area-inset-bottom is around 34px. By subtracting 0.75rem (~12px), we push it down closer to the home indicator. */
+  bottom: max(0.5rem, calc(env(safe-area-inset-bottom, 1rem) - 0.75rem));
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-nav);
