@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
-import { AnimatePresence, motion, useDragControls } from 'framer-motion';
+import { AnimatePresence, motion, useDragControls, useAnimation } from 'framer-motion';
 import HomePage from '../../pages/HomePage';
 import SoundsPage from '../../pages/SoundsPage';
 import SoundListPage from '../../pages/SoundListPage';
@@ -50,6 +50,7 @@ function TabPage({ children }) {
 function DeepPage({ children, isTabSwitch, tabBase }) {
   const navigate = useNavigate();
   const dragControls = useDragControls();
+  const controls = useAnimation();
 
   // Only start drag if pointer is on the left edge (iOS edge swipe)
   const startDrag = (event) => {
@@ -59,12 +60,15 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
   };
 
   const handleDragEnd = (event, info) => {
-    // Exige un slide d'au moins 50% de l'écran pour déclencher le retour
     const swipeThreshold = window.innerWidth * 0.50;
-
-    // On retire la vérification de vélocité faible pour forcer le snap back en dessous de 70%
+    
     if (info.offset.x > swipeThreshold || info.velocity.x > 1200) {
+      // Swipe successful: navigate away! 
+      // The exit animation will take over and perfectly inherit the finger's velocity.
       navigate(tabBase || '/');
+    } else {
+      // Swipe failed: snap back manually!
+      controls.start('in');
     }
   };
 
@@ -72,13 +76,17 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
     <motion.div
       custom={isTabSwitch}
       initial="initial"
-      animate="in"
+      animate={controls}
       exit="out"
       variants={deepVariants}
       drag="x"
       dragControls={dragControls}
       dragListener={false} // Disable dragging from anywhere
       onPointerDown={startDrag}
+      // No right constraint! This prevents the automatic snap-back from killing momentum
+      dragConstraints={{ left: 0 }}
+      dragElastic={1} // 1:1 finger tracking, no rubber banding resistance
+      onDragEnd={handleDragEnd}
       style={{
         position: 'fixed',
         top: 0,
@@ -98,11 +106,6 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
         WebkitOverflowScrolling: 'touch',
         touchAction: 'pan-y',
       }}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={{ left: 0, right: 0.8 }}
-      dragSnapToOrigin={true}
-      dragTransition={{ bounceStiffness: 600, bounceDamping: 60 }}
-      onDragEnd={handleDragEnd}
     >
       {children}
     </motion.div>
