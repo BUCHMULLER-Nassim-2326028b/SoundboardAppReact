@@ -57,20 +57,31 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
 
   useEffect(() => {
     if (isPresent) {
-      // Animate In - Ultra sharp, zero bounce
-      animate(x, 0, { type: 'spring', damping: 40, stiffness: 500, mass: 0.5 });
+      if (isTabSwitch) {
+        // Instant mount if we are just switching tabs
+        x.set(0);
+      } else {
+        // Animate In - Ultra sharp, zero bounce
+        animate(x, 0, { type: 'spring', damping: 40, stiffness: 500, mass: 0.5 });
+      }
     } else {
-      // Animate Out - Inherits velocity, zero floaty bounce
-      animate(x, window.innerWidth, { 
-        type: 'spring', 
-        damping: 40, 
-        stiffness: 500, 
-        mass: 0.5,
-        velocity: x.getVelocity(),
-        onComplete: safeToRemove
-      });
+      if (isTabSwitch) {
+        // Instant unmount if we are just switching tabs
+        x.set(window.innerWidth);
+        safeToRemove();
+      } else {
+        // Animate Out - Inherits velocity, zero floaty bounce
+        animate(x, window.innerWidth, { 
+          type: 'spring', 
+          damping: 40, 
+          stiffness: 500, 
+          mass: 0.5,
+          velocity: x.getVelocity(),
+          onComplete: safeToRemove
+        });
+      }
     }
-  }, [isPresent, safeToRemove, x]);
+  }, [isPresent, safeToRemove, x, isTabSwitch]);
 
   const startDrag = (event) => {
     if (event.clientX <= 45) {
