@@ -52,6 +52,11 @@ function DeepPage({ children, isTabSwitch, tabBase }) {
   const dragControls = useDragControls();
   const controls = useAnimation();
 
+  // Manually trigger the 'in' animation on mount since we are using controls
+  useEffect(() => {
+    controls.start('in');
+  }, [controls]);
+
   // Only start drag if pointer is on the left edge (iOS edge swipe)
   const startDrag = (event) => {
     if (event.clientX <= 45) {
