@@ -1,14 +1,48 @@
 {
   "categories": [
     {
+      "id": "maskass",
+      "name": "Maskass",
+      "displayTitle": "MASKASS",
+      "size": "featured",
+      "icon": "ghost",
+      "image": "/images/categories/art_maskass.png",
+      "bannerColor": "rgba(140, 20, 30, 0.95)",
+      "color": "#d32f2f",
+      "bgGradient": [
+        "#ef5350",
+        "#f44336"
+      ],
+      "isNew": true,
+      "description": "La collection Maskass",
+      "sounds": [
+        {
+          "id": "maskass-cri",
+          "name": "Cri de Maskass",
+          "audio": "/sounds/maskass-cri.mp3",
+          "image": "/images/sounds/maskass.png"
+        },
+        {
+          "id": "maskass-surprise",
+          "name": "Surprise !",
+          "audio": "/sounds/maskass-surprise.mp3",
+          "image": "/images/sounds/maskass.png"
+        }
+      ]
+    },
+    {
       "id": "base",
       "name": "Sons de base",
-      "displayTitle": ["SONS", "DE BASE"],
-      "icon": "🎮",
+      "displayTitle": "SONS DE BASE",
+      "size": "normal",
+      "icon": "gamepad",
       "image": "/images/categories/art_base.png",
       "bannerColor": "#111827",
       "color": "#1a3a8a",
-      "bgGradient": ["#1a237e", "#283593"],
+      "bgGradient": [
+        "#1a237e",
+        "#283593"
+      ],
       "isNew": false,
       "description": "Les classiques qui font le game",
       "sounds": [
@@ -53,12 +87,16 @@
     {
       "id": "english",
       "name": "Sons Anglais",
-      "displayTitle": ["SONS", "ANGLAIS"],
-      "icon": "🇬🇧",
+      "displayTitle": "SONS ANGLAIS",
+      "size": "normal",
+      "icon": "globe",
       "image": "/images/categories/art_anglais.png",
       "bannerColor": "#111827",
       "color": "#b71c1c",
-      "bgGradient": ["#c62828", "#e53935"],
+      "bgGradient": [
+        "#c62828",
+        "#e53935"
+      ],
       "isNew": false,
       "description": "The English collection",
       "sounds": [
@@ -101,30 +139,38 @@
       ]
     },
     {
-      "id": "maskass",
-      "name": "Maskass",
-      "displayTitle": "MASKASS",
-      "icon": "👻",
-      "image": "/images/categories/art_maskass.png",
-      "bannerColor": "rgba(140, 20, 30, 0.95)",
-      "color": "#d32f2f",
-      "bgGradient": ["#ef5350", "#f44336"],
-      "isNew": true,
-      "description": "La collection Maskass",
-      "sounds": [
-        {
-          "id": "maskass-cri",
-          "name": "Cri de Maskass",
-          "audio": "/sounds/maskass-cri.mp3",
-          "image": "/images/sounds/maskass.png"
-        },
-        {
-          "id": "maskass-surprise",
-          "name": "Surprise !",
-          "audio": "/sounds/maskass-surprise.mp3",
-          "image": "/images/sounds/maskass.png"
-        }
-      ]
+      "id": "all",
+      "name": "Tous les sons",
+      "displayTitle": "Voir tout",
+      "size": "petit",
+      "icon": "sparkles",
+      "image": "/images/categories/art_tous.svg",
+      "bannerColor": "#111827",
+      "color": "#1e3a8a",
+      "bgGradient": [
+        "#1e40af",
+        "#1e3a8a"
+      ],
+      "isNew": false,
+      "description": "Tous les sons réunis",
+      "sounds": []
+    },
+    {
+      "id": "custom",
+      "name": "Mes sons",
+      "displayTitle": "MES SONS",
+      "size": "petit",
+      "icon": "mic",
+      "image": "/images/categories/art_messons.svg",
+      "bannerColor": "#111827",
+      "color": "#4338ca",
+      "bgGradient": [
+        "#4f46e5",
+        "#3730a3"
+      ],
+      "isNew": false,
+      "description": "Mes sons personnalisés",
+      "sounds": []
     }
   ]
 }

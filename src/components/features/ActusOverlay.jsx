@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import eventsData from '../../data/events.json';
+import AnimatedBackground from '../ui/AnimatedBackground';
 import './ActusOverlay.css';
 
 export default function ActusOverlay({ isOpen, onClose }) {
@@ -124,6 +125,17 @@ export default function ActusOverlay({ isOpen, onClose }) {
         if (e.target === e.currentTarget) onClose();
       }}
     >
+      {/* Dynamic Ambient Event Background */}
+      {currentEvent?.animatedBackground && (
+        <AnimatedBackground
+          type={currentEvent.animatedBackground.type}
+          colors={currentEvent.animatedBackground.colors}
+          className="actus-overlay-backdrop-anim"
+          particleCount={18}
+          overlay={true}
+        />
+      )}
+
       {/* Top Bar with RETOUR button */}
       <header className="actus-topbar">
         <button
@@ -159,6 +171,17 @@ export default function ActusOverlay({ isOpen, onClose }) {
           {events.map((event, index) => (
             <div key={event.id} className="actus-card-slide">
               <div className="actus-card">
+                {/* Event Animated Background inside card */}
+                {event.animatedBackground && (
+                  <AnimatedBackground
+                    type={event.animatedBackground.type}
+                    colors={event.animatedBackground.colors}
+                    className="actus-card-anim-bg"
+                    particleCount={12}
+                    overlay={false}
+                  />
+                )}
+
                 {event.image ? (
                   <img
                     src={event.image}

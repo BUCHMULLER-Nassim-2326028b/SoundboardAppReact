@@ -1,33 +1,18 @@
+import { useMemo } from 'react';
 import './SoundsPage.css';
 import soundsData from '../data/sounds.json';
 import CategoryCard from '../components/ui/CategoryCard';
 
-const EXTRA_CATEGORIES = [
-  {
-    id: 'all',
-    name: 'Tous les sons',
-    displayTitle: ['TOUS LES', 'SONS'],
-    image: '/images/categories/art_tous.svg',
-    bannerColor: '#111827',
-  },
-  {
-    id: 'custom',
-    name: 'Mes sons',
-    displayTitle: 'MES SONS',
-    image: '/images/categories/art_messons.svg',
-    bannerColor: '#111827',
-  },
-];
-
 export default function SoundsPage() {
   const categories = soundsData.categories;
 
-  // Featured category on top: Maskass
-  const featured = categories.find((c) => c.id === 'maskass') || categories[0];
-  const otherCategories = categories.filter((c) => c.id !== featured.id);
-
-  // Grid includes: Sons de base, Sons Anglais, Tous les sons, Mes sons
-  const gridCategories = [...otherCategories, ...EXTRA_CATEGORIES];
+  // Ensure featured categories are ALWAYS at the top, then normal, then petit
+  const sortedCategories = useMemo(() => {
+    const featured = categories.filter((c) => c.size === 'featured');
+    const normal = categories.filter((c) => c.size === 'normal' || (!c.size && c.size !== 'petit'));
+    const petit = categories.filter((c) => c.size === 'petit');
+    return [...featured, ...normal, ...petit];
+  }, [categories]);
 
   return (
     <div className="page sounds-page">
@@ -35,16 +20,15 @@ export default function SoundsPage() {
         <h1 className="sounds-title">CHOIX DE LA CATÉGORIE</h1>
       </header>
 
-      {/* Top Featured Card (Maskass) */}
-      <section className="sounds-featured-section" aria-label="Catégorie à la une">
-        <CategoryCard category={featured} size="featured" />
-      </section>
-
-      {/* 2-Column Grid */}
+      {/* Unified grid: featured (top banner), normal (2 cols), and petit (1-line pair) */}
       <section className="sounds-grid-section" aria-label="Catégories">
         <div className="sounds-grid">
-          {gridCategories.map((category) => (
-            <CategoryCard key={category.id} category={category} size="normal" />
+          {sortedCategories.map((category) => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              size={category.size || 'normal'}
+            />
           ))}
         </div>
       </section>

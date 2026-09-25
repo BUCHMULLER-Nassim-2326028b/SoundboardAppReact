@@ -111,18 +111,44 @@ export default function BottomNav() {
   const activeIndex = getActiveIndex();
   const [isPressed, setIsPressed] = useState(false);
   const [dragCandidateIndex, setDragCandidateIndex] = useState(activeIndex);
-  const [pillWidth, setPillWidth] = useState(0);
+  const tabRefs = useRef([]);
+  const tabsGeometryRef = useRef([]);
 
-  // Geometry helper: replicates Apple Music wide pill proportions and padding
-  const getPillGeometry = useCallback((navWidth, targetIndex) => {
-    const padding = 3;
-    const colWidth = (navWidth - padding * 2) / 4;
-    // Wide Apple Music capsule: fills nearly the entire column width
-    const pillW = Math.round(colWidth - 2);
-    const offsetInCol = Math.round((colWidth - pillW) / 2);
-    const targetX = padding + targetIndex * colWidth + offsetInCol;
-    return { colWidth, pillW, targetX, offsetInCol, padding };
+  // Cache tab geometry to prevent forced synchronous reflows during 60/120fps drag & slide
+  const measureTabs = useCallback(() => {
+    if (!navInnerRef.current) return [];
+
+    const geometries = tabRefs.current.map((el, idx) => {
+      if (el && el.offsetWidth > 0) {
+        return {
+          targetX: el.offsetLeft,
+          pillW: el.offsetWidth,
+          center: el.offsetLeft + el.offsetWidth / 2,
+        };
+      }
+      // Pure symmetric fallback
+      const padding = 3;
+      const navWidth = navInnerRef.current.clientWidth || 378;
+      const colWidth = (navWidth - padding * 2) / 4;
+      const targetX = padding + idx * colWidth;
+      return {
+        targetX,
+        pillW: colWidth,
+        center: targetX + colWidth / 2,
+      };
+    });
+
+    tabsGeometryRef.current = geometries;
+    return geometries;
   }, []);
+
+  const getPillGeometry = useCallback((targetIndex) => {
+    if (tabsGeometryRef.current[targetIndex]) {
+      return tabsGeometryRef.current[targetIndex];
+    }
+    const measured = measureTabs();
+    return measured[targetIndex] || { targetX: 3, pillW: 90, center: 48 };
+  }, [measureTabs]);
 
   // Store mutable drag data in ref for zero-latency 60/120fps tracking
   const dragRef = useRef({
@@ -130,33 +156,31 @@ export default function BottomNav() {
     startX: 0,
     startPillX: 0,
     currentPillX: 0,
-    colWidth: 0,
     pillWidth: 0,
-    offsetInCol: 0,
-    padding: 3,
-    navWidth: 0,
+    minX: 3,
+    maxX: 280,
     hasMoved: false,
     initialIndex: activeIndex,
+    lastCandidate: activeIndex,
     lastX: 0,
     lastTime: 0,
   });
 
   // Glide pill smoothly to a tab index (NO POP: continuous GPU translation)
   const glidePillToIndex = useCallback((targetIndex, animated = true) => {
-    if (!navInnerRef.current || !pillRef.current) return;
-    const navWidth = navInnerRef.current.offsetWidth;
-    const { colWidth, pillW, targetX, offsetInCol, padding } = getPillGeometry(navWidth, targetIndex);
+    if (!pillRef.current) return;
+    const { pillW, targetX } = getPillGeometry(targetIndex);
+    if (!pillW) return;
 
-    setPillWidth(pillW);
     dragRef.current.currentPillX = targetX;
-    dragRef.current.colWidth = colWidth;
     dragRef.current.pillWidth = pillW;
-    dragRef.current.offsetInCol = offsetInCol;
-    dragRef.current.padding = padding;
+
+    // Direct DOM width update to avoid React re-render during animations
+    pillRef.current.style.width = `${pillW}px`;
 
     if (animated) {
       pillRef.current.style.transition =
-        'transform 0.34s cubic-bezier(0.25, 1, 0.4, 1)';
+        'transform 0.42s cubic-bezier(0.16, 1, 0.3, 1)';
     } else {
       pillRef.current.style.transition = 'none';
     }
@@ -165,42 +189,55 @@ export default function BottomNav() {
 
   // When activeIndex changes (navigation, route change, click), smoothly glide to the new tab!
   useEffect(() => {
+    measureTabs();
     glidePillToIndex(activeIndex, true);
     setDragCandidateIndex(activeIndex);
-  }, [activeIndex, glidePillToIndex]);
+  }, [activeIndex, glidePillToIndex, measureTabs]);
 
   // Window resize handler
   useEffect(() => {
-    const onResize = () => glidePillToIndex(activeIndex, false);
+    const onResize = () => {
+      measureTabs();
+      glidePillToIndex(activeIndex, false);
+    };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [activeIndex, glidePillToIndex]);
+  }, [activeIndex, glidePillToIndex, measureTabs]);
 
   // Pointer Down (Press to inflate & prepare drag)
   const handlePointerDown = (e) => {
     if (!navInnerRef.current) return;
     const rect = navInnerRef.current.getBoundingClientRect();
-    const navWidth = rect.width;
-    const padding = 3;
-    const colWidth = (navWidth - padding * 2) / 4;
-    const clickX = e.clientX - rect.left - padding;
-    const clickedIndex = Math.min(3, Math.max(0, Math.floor(clickX / colWidth)));
+    const clickX = e.clientX - rect.left;
 
-    const { pillW, targetX: defaultX, offsetInCol } = getPillGeometry(navWidth, clickedIndex);
-    const currentX = dragRef.current.currentPillX || defaultX;
+    const geometries = tabsGeometryRef.current.length > 0 ? tabsGeometryRef.current : measureTabs();
+
+    // Detect clicked tab by closest center (cached, no DOM reflow!)
+    let clickedIndex = 0;
+    let minDistance = Infinity;
+    geometries.forEach((geo, idx) => {
+      const dist = Math.abs(clickX - geo.center);
+      if (dist < minDistance) {
+        minDistance = dist;
+        clickedIndex = idx;
+      }
+    });
+
+    const { pillW, targetX } = geometries[clickedIndex] || getPillGeometry(clickedIndex);
+    const minX = geometries[0]?.targetX ?? 3;
+    const maxX = geometries[geometries.length - 1]?.targetX ?? targetX;
 
     dragRef.current = {
       isDragging: true,
       startX: e.clientX,
-      startPillX: currentX,
-      currentPillX: currentX,
-      colWidth,
+      startPillX: targetX,
+      currentPillX: targetX,
       pillWidth: pillW,
-      offsetInCol,
-      padding,
-      navWidth,
+      minX,
+      maxX,
       hasMoved: false,
       initialIndex: clickedIndex,
+      lastCandidate: clickedIndex,
       lastX: e.clientX,
       lastTime: performance.now(),
     };
@@ -209,18 +246,19 @@ export default function BottomNav() {
     setDragCandidateIndex(clickedIndex);
     e.currentTarget.setPointerCapture(e.pointerId);
 
-    // Inflate pill on press with soft, buttery ease (scale 1.30)
+    // Inflate pill on press with soft, buttery ease (scale 1.24) and glide to target tab immediately
     if (pillRef.current) {
+      pillRef.current.style.width = `${pillW}px`;
       pillRef.current.style.transition =
-        'transform 0.26s cubic-bezier(0.25, 1, 0.4, 1)';
-      pillRef.current.style.transform = `translate3d(${currentX}px, 0, 0) scale(1.30, 1.30)`;
+        'transform 0.34s cubic-bezier(0.16, 1, 0.3, 1)';
+      pillRef.current.style.transform = `translate3d(${targetX}px, 0, 0) scale(1.24, 1.24)`;
     }
 
     // Bar expands subtly and independently at its origin (separated X and Y)
     if (navInnerRef.current) {
       navInnerRef.current.style.transformOrigin = 'center center';
       navInnerRef.current.style.transition =
-        'transform 0.24s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.22s ease';
+        'transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease';
       navInnerRef.current.style.transform = 'translateX(0px) translateY(0px) scaleX(1.008) scaleY(1.004)';
     }
   };
@@ -230,15 +268,16 @@ export default function BottomNav() {
     if (!dragRef.current.isDragging || !pillRef.current) return;
 
     const deltaX = e.clientX - dragRef.current.startX;
-    if (Math.abs(deltaX) > 4) {
-      dragRef.current.hasMoved = true;
+    if (!dragRef.current.hasMoved) {
+      if (Math.abs(deltaX) > 5) {
+        dragRef.current.hasMoved = true;
+      } else {
+        return; // Don't interrupt the transition if pointer barely moved (jitter)
+      }
     }
 
-    const { startPillX, colWidth, offsetInCol, padding } = dragRef.current;
+    const { startPillX, minX, maxX, pillWidth: currentPillW } = dragRef.current;
     const rawTargetX = startPillX + deltaX;
-
-    const minX = padding + offsetInCol;
-    const maxX = padding + 3 * colWidth + offsetInCol;
 
     let clampedX = rawTargetX;
 
@@ -257,39 +296,53 @@ export default function BottomNav() {
     }
 
     // 2. Pill Stretch & Softened Vertical Squash on Borders
-    let scaleX = 1.30;
-    let scaleY = 1.30;
+    let scaleX = 1.24;
+    let scaleY = 1.24;
 
     if (rawTargetX < minX) {
       clampedX = minX;
       const overflow = minX - rawTargetX;
-      const squashRatio = Math.min(0.07, overflow / 280);
-      scaleX = Math.max(1.24, 1.30 - squashRatio * 0.6);
-      scaleY = 1.30 + squashRatio * 0.7;
+      const squashRatio = Math.min(0.06, overflow / 300);
+      scaleX = Math.max(1.18, 1.24 - squashRatio * 0.5);
+      scaleY = 1.24 + squashRatio * 0.6;
     } else if (rawTargetX > maxX) {
       clampedX = maxX;
       const overflow = rawTargetX - maxX;
-      const squashRatio = Math.min(0.07, overflow / 280);
-      scaleX = Math.max(1.24, 1.30 - squashRatio * 0.6);
-      scaleY = 1.30 + squashRatio * 0.7;
+      const squashRatio = Math.min(0.06, overflow / 300);
+      scaleX = Math.max(1.18, 1.24 - squashRatio * 0.5);
+      scaleY = 1.24 + squashRatio * 0.6;
     }
 
     dragRef.current.currentPillX = clampedX;
 
-    // Direct GPU transform update on the pill
+    // Direct GPU transform update on the pill: ZERO reflow, 120fps fluid!
     pillRef.current.style.transition = 'none';
     pillRef.current.style.transform = `translate3d(${clampedX}px, 0, 0) scale(${scaleX.toFixed(3)}, ${scaleY.toFixed(3)})`;
 
-    // Detect candidate tab underneath
-    const candidate = Math.min(3, Math.max(0, Math.round((clampedX - (padding + offsetInCol)) / colWidth)));
-    setDragCandidateIndex(candidate);
+    // Detect candidate tab underneath by cached center distance
+    const pillCenter = clampedX + currentPillW / 2;
+    let candidate = 0;
+    let minDist = Infinity;
+    tabsGeometryRef.current.forEach((geo, idx) => {
+      const dist = Math.abs(pillCenter - geo.center);
+      if (dist < minDist) {
+        minDist = dist;
+        candidate = idx;
+      }
+    });
+
+    // Only update React state when candidate index actually changes
+    if (dragRef.current.lastCandidate !== candidate) {
+      dragRef.current.lastCandidate = candidate;
+      setDragCandidateIndex(candidate);
+    }
   };
 
   // Pointer Up (Drop to snap & navigate, or simple click)
   const handlePointerUp = (e) => {
     if (!dragRef.current.isDragging) return;
 
-    const { colWidth, currentPillX, hasMoved, initialIndex, offsetInCol, padding } = dragRef.current;
+    const { currentPillX, hasMoved, initialIndex, pillWidth: currentPillW } = dragRef.current;
     dragRef.current.isDragging = false;
     setIsPressed(false);
 
@@ -303,18 +356,27 @@ export default function BottomNav() {
     if (navInnerRef.current) {
       navInnerRef.current.style.transformOrigin = 'center center';
       navInnerRef.current.style.transition =
-        'transform 0.32s cubic-bezier(0.25, 1, 0.4, 1), box-shadow 0.25s ease';
+        'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.32s ease';
       navInnerRef.current.style.transform = 'translateX(0px) translateY(0px) scaleX(1) scaleY(1)';
     }
 
     // Determine target index:
-    const targetIndex = hasMoved
-      ? Math.min(3, Math.max(0, Math.round((currentPillX - (padding + offsetInCol)) / colWidth)))
-      : initialIndex;
+    let targetIndex = initialIndex;
+    if (hasMoved) {
+      const pillCenter = currentPillX + currentPillW / 2;
+      let minDist = Infinity;
+      tabsGeometryRef.current.forEach((geo, idx) => {
+        const dist = Math.abs(pillCenter - geo.center);
+        if (dist < minDist) {
+          minDist = dist;
+          targetIndex = idx;
+        }
+      });
+    }
 
     setDragCandidateIndex(targetIndex);
 
-    // Smoothly glide pill to target position (NO POP!)
+    // Smoothly glide pill to target position with spring transition
     glidePillToIndex(targetIndex, true);
 
     // Navigate to target if different
@@ -329,7 +391,7 @@ export default function BottomNav() {
     if (navInnerRef.current) {
       navInnerRef.current.style.transformOrigin = 'center center';
       navInnerRef.current.style.transition =
-        'transform 0.32s cubic-bezier(0.25, 1, 0.4, 1)';
+        'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1)';
       navInnerRef.current.style.transform = 'translateX(0px) translateY(0px) scaleX(1) scaleY(1)';
     }
     glidePillToIndex(activeIndex, true);
@@ -350,26 +412,24 @@ export default function BottomNav() {
         <div
           ref={pillRef}
           className={`bottom-nav__liquid-pill ${isPressed ? 'bottom-nav__liquid-pill--pressed' : ''}`}
-          style={{
-            width: `${pillWidth}px`,
-          }}
           aria-hidden="true"
         />
 
         {/* Tab Items */}
         {TABS.map((tab, idx) => {
-          const isActive = idx === activeIndex;
-          const isCandidate = isPressed && idx === dragCandidateIndex;
+          const isHighlighted = isPressed ? idx === dragCandidateIndex : idx === activeIndex;
+          const isItemPressed = isPressed && idx === dragCandidateIndex;
 
           return (
             <div
               key={tab.id}
-              className={`bottom-nav__item ${isActive ? 'bottom-nav__item--active' : ''} ${isCandidate ? 'bottom-nav__item--drag-candidate' : ''}`}
+              ref={(el) => (tabRefs.current[idx] = el)}
+              className={`bottom-nav__item ${isHighlighted ? 'bottom-nav__item--active' : ''} ${isItemPressed ? 'bottom-nav__item--pressed' : ''}`}
               id={`nav-${tab.id}`}
               role="button"
               tabIndex={0}
               aria-label={tab.label}
-              aria-current={isActive ? 'page' : undefined}
+              aria-current={idx === activeIndex ? 'page' : undefined}
             >
               <div className="bottom-nav__icon-wrapper">
                 <tab.icon size={22} />
