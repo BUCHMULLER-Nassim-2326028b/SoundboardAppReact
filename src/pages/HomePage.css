@@ -7,9 +7,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
   flex: 1;
   gap: 14px;
   width: 100%;
