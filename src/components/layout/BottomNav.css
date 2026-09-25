@@ -4,7 +4,7 @@
 
 .bottom-nav {
   position: fixed;
-  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(6px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-nav);
@@ -18,7 +18,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   align-items: center;
-  height: 56px;
+  height: 52px;
   position: relative;
   overflow: visible;
 
