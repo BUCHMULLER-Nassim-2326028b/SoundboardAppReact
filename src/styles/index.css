@@ -2,7 +2,89 @@
    SAVUNAPP — Design System
    ============================================ */
 
-/* ---------- Google Fonts ---------- */
+/* ---------- Gilroy Local Fonts ---------- */
+@font-face {
+  font-family: 'Gilroy';
+  src: url('/fonts/gilroy/Gilroy-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('/fonts/gilroy/Gilroy-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('/fonts/gilroy/Gilroy-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('/fonts/gilroy/Gilroy-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('/fonts/gilroy/Gilroy-Heavy.woff') format('woff');
+  font-weight: 800 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Fallback individual weight aliases */
+@font-face {
+  font-family: 'Gilroy-Light';
+  src: url('/fonts/gilroy/Gilroy-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gilroy-Regular';
+  src: url('/fonts/gilroy/Gilroy-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gilroy-Medium';
+  src: url('/fonts/gilroy/Gilroy-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gilroy-Bold';
+  src: url('/fonts/gilroy/Gilroy-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gilroy-Heavy';
+  src: url('/fonts/gilroy/Gilroy-Heavy.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- Google Fonts (Fallbacks) ---------- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400..900;1,400..900&family=Outfit:ital,wght@0,400..900;1,400..900&display=swap');
 
 /* ---------- CSS Custom Properties ---------- */
@@ -37,8 +119,8 @@
   --color-new-badge: #e53935;
 
   /* Typography */
-  --font-display: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --font-display: 'Gilroy', -apple-system, BlinkMacSystemFont, 'Outfit', 'Segoe UI', Roboto, sans-serif;
+  --font-body: 'Gilroy', -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
   --font-skinny: 'Barlow Condensed', 'Arial Narrow', sans-serif;
 
   /* Spacing */
