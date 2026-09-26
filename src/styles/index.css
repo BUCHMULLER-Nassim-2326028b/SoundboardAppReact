@@ -305,9 +305,9 @@ select {
 /* ---------- Layout ---------- */
 .page {
   min-height: 100%;
-  padding: var(--space-md) var(--space-md) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + var(--space-lg));
+  padding: 1.25rem var(--space-md) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 1.75rem);
   width: 100%;
-  max-width: 480px;
+  max-width: 26.25rem; /* 420px */
   margin: 0 auto;
   box-sizing: border-box;
 }
@@ -319,10 +319,12 @@ select {
 
 .page-title {
   font-family: var(--font-display);
-  font-weight: 900;
-  font-size: 1.75rem;
+  font-weight: 600;
+  font-size: clamp(1.45rem, 5.5vw, 1.85rem);
   text-transform: uppercase;
-  color: var(--color-text-primary);
+  color: #ffffff;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
 /* ---------- Scrollbar ---------- */
@@ -347,6 +349,41 @@ select {
 ::selection {
   background: var(--color-accent);
   color: white;
+}
+
+/* ---------- Settings / Lists (Human UI) ---------- */
+.settings-block {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+}
+
+.settings-row.interactive {
+  cursor: pointer;
+  transition: background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.settings-row.interactive:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.settings-row.interactive:active {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 /* ---------- Utility Classes ---------- */

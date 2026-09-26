@@ -8,29 +8,8 @@
   align-items: center;
   min-height: 100%;
   gap: 1.5rem; /* 25px */
-  width: 100%;
-  max-width: 26.25rem; /* 420px */
-  margin: 0 auto;
-  padding: 1.25rem var(--space-md) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 1.75rem) !important;
-  box-sizing: border-box;
 }
 
-/* Header */
-.sounds-header {
-  text-align: center;
-  width: 100%;
-  margin-bottom: 2px;
-}
-
-.sounds-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.45rem, 5.5vw, 1.85rem);
-  text-transform: uppercase;
-  color: #ffffff;
-  letter-spacing: 0.04em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
 
 /* Top Featured Card Section */
 .sounds-featured-section {

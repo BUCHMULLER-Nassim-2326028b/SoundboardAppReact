@@ -10,12 +10,6 @@
   min-height: 100%;
   gap: 0.875rem;
   /* 14px */
-  width: 100%;
-  max-width: 26.25rem;
-  /* 420px */
-  margin: 0 auto;
-  padding: 1.25rem var(--space-md) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px) + 1.5rem) !important;
-  box-sizing: border-box;
 }
 
 /* ---------- Clean Logo Image ---------- */
@@ -77,17 +71,17 @@
 .home-actus-text {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: clamp(3rem, 11vw, 3.8rem);
+  font-style: italic;
+  font-size: clamp(5rem, 11vw, 3.8rem);
   letter-spacing: 0.05em;
   color: #3b82f6;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   user-select: none;
 }
 
 /* Captions under cards */
 .home-card-caption {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 500;
   font-size: 0.92rem;
   color: #ffffff;
   margin-top: 5px;

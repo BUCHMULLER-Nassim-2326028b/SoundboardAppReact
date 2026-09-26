@@ -33,8 +33,8 @@ export default function SoundsPage({ isActive = true }) {
   return (
     <>
       <div className="page sounds-page">
-        <header className="sounds-header">
-          <h1 className="sounds-title">CHOIX DE LA CATÉGORIE</h1>
+        <header className="page-header">
+          <h1 className="page-title">CHOIX DE LA CATÉGORIE</h1>
         </header>
 
         {/* Unified grid: featured (top banner), normal (2 cols), and petit (1-line pair) */}

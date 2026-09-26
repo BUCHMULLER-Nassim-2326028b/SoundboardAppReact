@@ -61,62 +61,61 @@ export default function OptionsPage() {
   return (
     <div className="page options-page">
       {/* Header */}
-      <header className="options-header">
-        <h1 className="options-title">OPTIONS</h1>
+      <header className="page-header">
+        <h1 className="page-title">OPTIONS</h1>
       </header>
 
       {/* 1. AUDIO & HAPTIQUE SECTION */}
       <section className="options-group" aria-label="Paramètres audio et retour">
-        <div className="options-card">
+        <div className="settings-block">
           {/* Volume Control */}
-          <div className="options-row">
-            <div className="options-row__info">
-              <button
-                type="button"
-                className="options-icon-btn"
-                onClick={handleToggleMute}
-                aria-label={state.volume === 0 ? 'Activer le son' : 'Couper le son'}
-                title={state.volume === 0 ? 'Activer' : 'Mute'}
-              >
-                {state.volume === 0 ? (
-                  <VolumeX size={20} className="options-icon--muted" />
-                ) : (
-                  <Volume2 size={20} />
-                )}
-              </button>
-              <div className="options-label-wrap">
-                <span className="options-label">Volume général</span>
-                <span className="options-sublabel">Ajuste le niveau sonore des répliques</span>
+          <div className="settings-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+            <div className="options-row__info" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button
+                  type="button"
+                  className="options-icon-btn"
+                  onClick={handleToggleMute}
+                  aria-label={state.volume === 0 ? 'Activer le son' : 'Couper le son'}
+                  title={state.volume === 0 ? 'Activer' : 'Mute'}
+                >
+                  {state.volume === 0 ? (
+                    <VolumeX size={30} className="options-icon--muted" />
+                  ) : (
+                    <Volume2 size={30} />
+                  )}
+                </button>
+                <div className="options-label-wrap">
+                  <span className="options-label">Volume général</span>
+                  <span className="options-sublabel">Ajuste le niveau sonore des répliques</span>
+                </div>
               </div>
+              <span className="options-val-pill">{Math.round(state.volume * 100)}%</span>
             </div>
 
-            <span className="options-val-pill">{Math.round(state.volume * 100)}%</span>
+            <div className="options-slider-container">
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={state.volume}
+                onChange={(e) =>
+                  dispatch({ type: 'SET_VOLUME', payload: parseFloat(e.target.value) })
+                }
+                className="options-slider"
+                id="volume-slider"
+                aria-label="Volume"
+                style={{ '--slider-fill': `${Math.round(state.volume * 100)}%` }}
+              />
+            </div>
           </div>
-
-          <div className="options-slider-container">
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={state.volume}
-              onChange={(e) =>
-                dispatch({ type: 'SET_VOLUME', payload: parseFloat(e.target.value) })
-              }
-              className="options-slider"
-              id="volume-slider"
-              aria-label="Volume"
-              style={{ '--slider-fill': `${Math.round(state.volume * 100)}%` }}
-            />
-          </div>
-
-          <div className="options-card__divider" />
 
           {/* Vibration / Haptic Feedback */}
-          <div className="options-row">
-            <div className="options-row__info">
+          <div className="settings-row" style={{ justifyContent: 'space-between' }}>
+            <div className="options-row__info" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div className="options-icon-btn options-icon-btn--static">
-                <Vibrate size={20} />
+                <Vibrate size={30} />
               </div>
               <div className="options-label-wrap">
                 <span className="options-label">Retours haptiques</span>
@@ -143,8 +142,8 @@ export default function OptionsPage() {
 
       {/* 2. STATISTIQUES SECTION */}
       <section className="options-group" aria-label="Statistiques de jeu">
-        <div className="options-card">
-          <div className="options-card__header">
+        <div className="settings-block" style={{ padding: '16px' }}>
+          <div className="options-card__header" style={{ marginBottom: '16px' }}>
             <BarChart2 size={18} className="options-section-icon" />
             <span className="options-section-title">STATISTIQUES</span>
           </div>
@@ -187,7 +186,7 @@ export default function OptionsPage() {
 
       {/* 3. ACTIONS & SYSTEM SECTION */}
       <section className="options-group" aria-label="Gestion de l'application">
-        <div className="options-card options-card--actions">
+        <div className="settings-block" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <button
             type="button"
             className="options-action-btn options-action-btn--primary"
@@ -212,17 +211,19 @@ export default function OptionsPage() {
 
       {/* 4. A PROPOS & CREDITS */}
       <footer className="options-footer">
-        <div className="options-card options-card--about">
-          <div className="options-about-header">
-            <span className="options-about-logo">SAVUNAPP</span>
-            <span className="options-about-version">v{eventsData.version || '2.0'}</span>
-          </div>
-          <p className="options-about-credits">
-            Hommage soundboard à l'univers et aux répliques cultes de <strong>Savun</strong>.
-          </p>
-          <div className="options-about-author">
-            <Info size={14} />
-            <span>Développé avec passion par nvssgoat</span>
+        <div className="settings-block">
+          <div className="options-card--about">
+            <div className="options-about-header">
+              <span className="options-about-logo">SAVUNAPP</span>
+              <span className="options-about-version">v{eventsData.version || '2.0'}</span>
+            </div>
+            <p className="options-about-credits">
+              Hommage soundboard à l'univers et aux répliques cultes de <strong>Savun</strong>.
+            </p>
+            <div className="options-about-author">
+              <Info size={14} />
+              <span>Développé avec passion par nvssgoat</span>
+            </div>
           </div>
         </div>
       </footer>
