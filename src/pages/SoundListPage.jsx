@@ -7,8 +7,9 @@ import CustomSoundSlot from '../components/features/CustomSoundSlot';
 import { useApp } from '../context/AppContext';
 import soundsData from '../data/sounds.json';
 
-export default function SoundListPage() {
-  const { categoryId } = useParams();
+export default function SoundListPage({ categoryId: propCategoryId }) {
+  const params = useParams();
+  const categoryId = propCategoryId || params?.categoryId;
   const navigate = useNavigate();
   const { state } = useApp();
 
@@ -40,61 +41,65 @@ export default function SoundListPage() {
 
   if (!category) {
     return (
-      <div className="page sound-list-page">
-        <div className="sound-list-404">
-          <HelpCircle size={48} />
-          <h2>Catégorie introuvable</h2>
-          <button onClick={() => navigate('/sons')} className="sound-list-404__btn">
-            Retour aux sons
-          </button>
+      <div className="sound-list-screen">
+        <div className="page sound-list-page">
+          <div className="sound-list-404">
+            <HelpCircle size={48} />
+            <h2>Catégorie introuvable</h2>
+            <button onClick={() => navigate('/sons')} className="sound-list-404__btn">
+              Retour aux sons
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="page sound-list-page">
-      {/* Header with clean RETOUR button */}
-      <header
-        className="sound-list-header slide-up"
-        style={{
-          '--cat-color-1': category.bgGradient?.[0] || category.color,
-          '--cat-color-2': category.bgGradient?.[1] || category.color,
-        }}
-      >
-        <button
-          className="sound-list-back"
-          onClick={() => navigate('/sons')}
-          id="back-to-categories"
-          aria-label="Retour au choix de la catégorie"
+    <div className="sound-list-screen">
+      <div className="page sound-list-page">
+        {/* Header with clean RETOUR button */}
+        <header
+          className="sound-list-header slide-up"
+          style={{
+            '--cat-color-1': category.bgGradient?.[0] || category.color,
+            '--cat-color-2': category.bgGradient?.[1] || category.color,
+          }}
         >
-          <ArrowLeft size={18} />
-          <span>RETOUR</span>
-        </button>
+          <button
+            className="sound-list-back"
+            onClick={() => navigate('/sons')}
+            id="back-to-categories"
+            aria-label="Retour au choix de la catégorie"
+          >
+            <ArrowLeft size={18} />
+            <span>RETOUR</span>
+          </button>
 
-        <h1 className="sound-list-title">{category.name}</h1>
-      </header>
+          <h1 className="sound-list-title">{category.name}</h1>
+        </header>
 
-      {/* If custom category, show slots + custom sounds */}
-      {isCustom ? (
-        <div className="sound-list-custom-section">
-          <p className="sound-list-custom-hint">
-            Glisse ou importe tes fichiers audio (.mp3, .wav, .ogg) dans les slots ci-dessous :
-          </p>
-          <div className="sound-list-slots-grid">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <CustomSoundSlot key={i} index={i} />
+        {/* If custom category, show slots + custom sounds */}
+        {isCustom ? (
+          <div className="sound-list-custom-section">
+            <p className="sound-list-custom-hint">
+              Glisse ou importe tes fichiers audio (.mp3, .wav, .ogg) dans les slots ci-dessous :
+            </p>
+            <div className="sound-list-slots-grid">
+              {[0, 1, 2, 3, 4, 5].map((i) => (
+                <CustomSoundSlot key={i} index={i} />
+              ))}
+            </div>
+          </div>
+        ) : (
+          /* Regular sound grid */
+          <div className="sound-list-grid">
+            {category.sounds.map((sound, index) => (
+              <SoundButton key={sound.id} sound={sound} index={index} />
             ))}
           </div>
-        </div>
-      ) : (
-        /* Regular sound grid */
-        <div className="sound-list-grid">
-          {category.sounds.map((sound, index) => (
-            <SoundButton key={sound.id} sound={sound} index={index} />
-          ))}
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

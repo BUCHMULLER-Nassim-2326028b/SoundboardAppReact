@@ -1,0 +1,33 @@
+/* ============================================
+   iOS Native Stack Navigation Styles
+   Ported directly from BaptisteApp
+   ============================================ */
+
+.app-root-nav {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  touch-action: pan-y;
+}
+
+.nav-screen {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.native-tab-pane {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
