@@ -1,12 +1,18 @@
 import { useMemo } from 'react';
-import './SoundsPage.css';
 import soundsData from '../data/sounds.json';
 import CategoryCard from '../components/ui/CategoryCard';
+import './SoundsPage.css';
 
+/**
+ * Sounds category selection view.
+ * Displays ordered categories (featured banner, standard grid, compact pairs).
+ *
+ * @component
+ * @returns {JSX.Element}
+ */
 export default function SoundsPage() {
   const categories = soundsData.categories;
 
-  // Ensure featured categories are ALWAYS at the top, then normal, then petit
   const sortedCategories = useMemo(() => {
     const featured = categories.filter((c) => c.size === 'featured');
     const normal = categories.filter((c) => c.size === 'normal' || (!c.size && c.size !== 'petit'));
@@ -20,7 +26,6 @@ export default function SoundsPage() {
         <h1 className="page-title">CHOIX DE LA CATÉGORIE</h1>
       </header>
 
-      {/* Unified grid: featured (top banner), normal (2 cols), and petit (1-line pair) */}
       <section className="sounds-grid-section" aria-label="Catégories">
         <div className="sounds-grid">
           {sortedCategories.map((category) => (

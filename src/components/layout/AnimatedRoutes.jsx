@@ -10,9 +10,14 @@ import './AnimatedRoutes.css';
 const ANIM_MS = 400;
 
 /**
- * Tab pane with native iOS savestate preservation:
- * Keeps all 4 tabs mounted so scroll positions, audio playback,
- * and user interactions are preserved with zero unmount flashes.
+ * Tab pane wrapper ensuring DOM persistence across tab navigation.
+ * Keeps inactive views mounted while preventing user interaction and rendering overhead.
+ *
+ * @component
+ * @param {object} props
+ * @param {React.ReactNode} props.children
+ * @param {boolean} props.isActive
+ * @returns {JSX.Element}
  */
 export function NativeTabPane({ children, isActive }) {
   return (
@@ -30,19 +35,20 @@ export function NativeTabPane({ children, isActive }) {
   );
 }
 
-// Backward compatibility export
 export const NativeTab = NativeTabPane;
 
 /**
- * TabStackView — Ultra-scalable stack navigator per tab
- * Directly ported from BaptisteApp's battle-tested stack navigation.
- * 
- * Features:
- * - Isolated per-tab stack: switching tabs NEVER destroys or pops the drill-down screen!
- * - Zero animation replay when toggling between tabs.
- * - Buttery smooth push / pop CSS transitions (400ms cubic-bezier).
- * - Parallax receding (-25%) & native edge drop shadow.
- * - Interactive 120 FPS edge-swipe back gesture with velocity release.
+ * Stack navigator managing hierarchical screens within a specific tab.
+ * Supports iOS-style push/pop transitions and edge-swipe back gestures.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} props.basePath - Tab root URL path.
+ * @param {string} props.currentPath - Active router location pathname.
+ * @param {React.ComponentType} props.rootComponent - Root view rendered at base path.
+ * @param {Array<{ pattern: RegExp, render: Function, getKey: Function }>} props.subRoutes - Route definitions for sub-views.
+ * @param {Function} props.onNavigate - Router navigation callback.
+ * @returns {JSX.Element}
  */
 function TabStackView({
   basePath,
@@ -51,7 +57,6 @@ function TabStackView({
   subRoutes,
   onNavigate,
 }) {
-  // Check if current route matches any defined sub-route for this tab
   const activeSubRoute = useMemo(() => {
     if (!currentPath.startsWith(basePath) || currentPath === basePath) return null;
     for (const r of subRoutes) {
@@ -67,7 +72,6 @@ function TabStackView({
     return null;
   }, [currentPath, basePath, subRoutes]);
 
-  // Stack of screens for this tab
   const [stack, setStack] = useState(() => {
     const base = [{ key: 'root', type: 'root' }];
     if (activeSubRoute) {
@@ -83,8 +87,6 @@ function TabStackView({
     return base;
   });
 
-  // Action determines visual transition state:
-  // 'idle' | 'push-init' | 'push-active' | 'pop-init' | 'pop-active' | 'swipe' | 'swipe-cancel' | 'swipe-pop'
   const [action, setAction] = useState('idle');
   const [swipeDx, setSwipeDx] = useState(0);
 
@@ -92,15 +94,11 @@ function TabStackView({
   const swipeRef = useRef({ active: false, startX: 0, startY: 0, startTime: 0 });
   const swipedPopRef = useRef(false);
 
-  // Sync stack when URL changes
   useEffect(() => {
-    // If the path does not belong to this tab, DO NOT touch this tab's stack!
-    // This achieves 100% native iOS state preservation across tab switches.
     if (!currentPath.startsWith(basePath)) {
       return;
     }
 
-    // Skip if programmatic navigation was triggered by a gesture swipe-pop
     if (swipedPopRef.current) {
       swipedPopRef.current = false;
       return;
@@ -108,13 +106,10 @@ function TabStackView({
 
     if (activeSubRoute) {
       const currentTop = stack[stack.length - 1];
-
-      // If this screen is already on top of the stack, DO NOT replay animation!
       if (currentTop?.key === activeSubRoute.key) {
         return;
       }
 
-      // PUSH NEW SCREEN
       lockRef.current = true;
       const newScreen = {
         key: activeSubRoute.key,
@@ -138,7 +133,6 @@ function TabStackView({
         });
       });
     } else if (currentPath === basePath && stack.length > 1) {
-      // POP BACK TO ROOT
       lockRef.current = true;
       setAction('pop-init');
 
@@ -155,11 +149,9 @@ function TabStackView({
     }
   }, [currentPath, basePath, activeSubRoute, stack, onNavigate]);
 
-  // --- INTERACTIVE iOS EDGE-SWIPE GESTURE LOGIC (BaptisteApp) ---
   const handleTouchStart = (e) => {
     if (lockRef.current || stack.length < 2) return;
     const x = e.touches ? e.touches[0].clientX : e.clientX;
-    // Edge detection: start within left 45px
     if (x < 45) {
       swipeRef.current = {
         active: true,
@@ -177,7 +169,6 @@ function TabStackView({
     const dx = clientX - swipeRef.current.startX;
     const dy = clientY - swipeRef.current.startY;
 
-    // Only engage horizontal swipe if moving predominantly to the right
     if (dx > 0 && Math.abs(dx) > Math.abs(dy)) {
       setSwipeDx(dx);
       setAction('swipe');
@@ -196,7 +187,6 @@ function TabStackView({
 
       lockRef.current = true;
 
-      // Threshold: dragged past halfway OR flicked with high velocity
       if (dx > screenW / 2 || velocity > 0.5) {
         setAction('swipe-pop');
         swipedPopRef.current = true;
@@ -306,28 +296,26 @@ function TabStackView({
 }
 
 /**
- * AnimatedRoutes — Main Native Tab Controller
- * Each tab preserves 100% of its scroll and state.
- * Any tab can hold its own stack without interfering with others.
+ * Root tab controller managing application-level tabs and nested stack state.
+ *
+ * @component
+ * @returns {JSX.Element}
  */
 export default function AnimatedRoutes() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Extract base tab from location (e.g. "/sons" from "/sons/humour")
   const segments = location.pathname.split('/').filter(Boolean);
   const currentTabBase = segments.length > 0 ? `/${segments[0]}` : '/';
 
   return (
     <div className="app-root-nav">
-      {/* Tab 0: Accueil */}
       <NativeTabPane isActive={currentTabBase === '/'}>
         <div className="native-tab-pane__scroll">
           <HomePage />
         </div>
       </NativeTabPane>
 
-      {/* Tab 1: Sons (with BaptisteApp-style stack navigation!) */}
       <NativeTabPane isActive={currentTabBase === '/sons'}>
         <TabStackView
           basePath="/sons"
@@ -349,14 +337,12 @@ export default function AnimatedRoutes() {
         />
       </NativeTabPane>
 
-      {/* Tab 2: Options */}
       <NativeTabPane isActive={currentTabBase === '/options'}>
         <div className="native-tab-pane__scroll">
           <OptionsPage />
         </div>
       </NativeTabPane>
 
-      {/* Tab 3: Contact */}
       <NativeTabPane isActive={currentTabBase === '/contact'}>
         <div className="native-tab-pane__scroll">
           <ContactPage />

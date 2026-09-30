@@ -1,6 +1,5 @@
 /* ============================================
    iOS Native Stack Navigation Styles
-   Ported directly from BaptisteApp
    ============================================ */
 
 .app-root-nav {
@@ -20,7 +19,6 @@
   overflow: hidden;
 }
 
-/* Individual tab scroll container when not stacked */
 .native-tab-pane__scroll {
   position: absolute;
   inset: 0;
@@ -31,7 +29,6 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Stack container per tab */
 .tab-stack-container {
   position: relative;
   width: 100%;

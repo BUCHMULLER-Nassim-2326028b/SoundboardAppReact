@@ -1,4 +1,3 @@
-import './SoundListPage.css';
 import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, HelpCircle } from 'lucide-react';
@@ -6,7 +5,18 @@ import SoundButton from '../components/ui/SoundButton';
 import CustomSoundSlot from '../components/features/CustomSoundSlot';
 import { useApp } from '../context/AppContext';
 import soundsData from '../data/sounds.json';
+import './SoundListPage.css';
 
+/**
+ * Category sounds detail view.
+ * Displays playable sound buttons or custom user slots with a back navigation header.
+ *
+ * @component
+ * @param {object} props
+ * @param {string} [props.categoryId] - Target category identifier.
+ * @param {Function} [props.onBack] - Callback triggered when navigating back.
+ * @returns {JSX.Element}
+ */
 export default function SoundListPage({ categoryId: propCategoryId, onBack }) {
   const params = useParams();
   const categoryId = propCategoryId || params?.categoryId;
@@ -66,7 +76,6 @@ export default function SoundListPage({ categoryId: propCategoryId, onBack }) {
   return (
     <div className="sound-list-screen">
       <div className="page sound-list-page">
-        {/* Header with clean RETOUR button */}
         <header
           className="sound-list-header slide-up"
           style={{
@@ -87,7 +96,6 @@ export default function SoundListPage({ categoryId: propCategoryId, onBack }) {
           <h1 className="sound-list-title">{category.name}</h1>
         </header>
 
-        {/* If custom category, show slots + custom sounds */}
         {isCustom ? (
           <div className="sound-list-custom-section">
             <p className="sound-list-custom-hint">
@@ -100,7 +108,6 @@ export default function SoundListPage({ categoryId: propCategoryId, onBack }) {
             </div>
           </div>
         ) : (
-          /* Regular sound grid */
           <div className="sound-list-grid">
             {category.sounds.map((sound, index) => (
               <SoundButton key={sound.id} sound={sound} index={index} />
