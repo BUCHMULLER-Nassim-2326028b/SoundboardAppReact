@@ -7,11 +7,19 @@ import CustomSoundSlot from '../components/features/CustomSoundSlot';
 import { useApp } from '../context/AppContext';
 import soundsData from '../data/sounds.json';
 
-export default function SoundListPage({ categoryId: propCategoryId }) {
+export default function SoundListPage({ categoryId: propCategoryId, onBack }) {
   const params = useParams();
   const categoryId = propCategoryId || params?.categoryId;
   const navigate = useNavigate();
   const { state } = useApp();
+
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      navigate('/sons');
+    }
+  };
 
   const isAll = categoryId === 'all';
   const isCustom = categoryId === 'custom';
@@ -46,7 +54,7 @@ export default function SoundListPage({ categoryId: propCategoryId }) {
           <div className="sound-list-404">
             <HelpCircle size={48} />
             <h2>Catégorie introuvable</h2>
-            <button onClick={() => navigate('/sons')} className="sound-list-404__btn">
+            <button onClick={handleBack} className="sound-list-404__btn">
               Retour aux sons
             </button>
           </div>
@@ -68,7 +76,7 @@ export default function SoundListPage({ categoryId: propCategoryId }) {
         >
           <button
             className="sound-list-back"
-            onClick={() => navigate('/sons')}
+            onClick={handleBack}
             id="back-to-categories"
             aria-label="Retour au choix de la catégorie"
           >

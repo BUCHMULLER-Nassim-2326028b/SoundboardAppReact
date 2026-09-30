@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import HomePage from '../../pages/HomePage';
 import SoundsPage from '../../pages/SoundsPage';
@@ -10,11 +10,11 @@ import './AnimatedRoutes.css';
 const ANIM_MS = 400;
 
 /**
- * Tab pane with native savestate preservation:
+ * Tab pane with native iOS savestate preservation:
  * Keeps all 4 tabs mounted so scroll positions, audio playback,
  * and user interactions are preserved with zero unmount flashes.
  */
-export function NativeTab({ children, isActive }) {
+export function NativeTabPane({ children, isActive }) {
   return (
     <div
       className="native-tab-pane"
@@ -30,36 +30,60 @@ export function NativeTab({ children, isActive }) {
   );
 }
 
+// Backward compatibility export
+export const NativeTab = NativeTabPane;
+
 /**
- * Deep Navigation Stack ported directly from BaptisteApp:
- * Provides fluid iOS stack transitions (push, pop, parallax receding,
- * dynamic drop shadow) and 60/120fps interactive edge-swipe gestures.
+ * TabStackView — Ultra-scalable stack navigator per tab
+ * Directly ported from BaptisteApp's battle-tested stack navigation.
+ * 
+ * Features:
+ * - Isolated per-tab stack: switching tabs NEVER destroys or pops the drill-down screen!
+ * - Zero animation replay when toggling between tabs.
+ * - Buttery smooth push / pop CSS transitions (400ms cubic-bezier).
+ * - Parallax receding (-25%) & native edge drop shadow.
+ * - Interactive 120 FPS edge-swipe back gesture with velocity release.
  */
-export default function AnimatedRoutes() {
-  const location = useLocation();
-  const navigate = useNavigate();
+function TabStackView({
+  basePath,
+  currentPath,
+  rootComponent: RootComponent,
+  subRoutes,
+  onNavigate,
+}) {
+  // Check if current route matches any defined sub-route for this tab
+  const activeSubRoute = useMemo(() => {
+    if (!currentPath.startsWith(basePath) || currentPath === basePath) return null;
+    for (const r of subRoutes) {
+      const match = currentPath.match(r.pattern);
+      if (match) {
+        return {
+          route: r,
+          match,
+          key: r.getKey(match),
+        };
+      }
+    }
+    return null;
+  }, [currentPath, basePath, subRoutes]);
 
-  // Extract base tab from location
-  const segments = location.pathname.split('/').filter(Boolean);
-  const currentTabBase = segments.length > 0 ? `/${segments[0]}` : '/';
-  const isDeepRoute = location.pathname.startsWith('/sons/') && location.pathname !== '/sons';
-  const initialCategoryId = isDeepRoute ? location.pathname.replace('/sons/', '') : null;
-
-  // Navigation Stack (Level 0 = Tabs container, Level 1+ = Pushed screens)
+  // Stack of screens for this tab
   const [stack, setStack] = useState(() => {
-    const base = [{ key: 'tabs', type: 'tabs' }];
-    if (isDeepRoute) {
+    const base = [{ key: 'root', type: 'root' }];
+    if (activeSubRoute) {
       base.push({
-        key: `sound-list-${initialCategoryId}`,
-        type: 'sound-list',
-        categoryId: initialCategoryId,
-        path: location.pathname,
+        key: activeSubRoute.key,
+        type: 'sub',
+        render: () =>
+          activeSubRoute.route.render(activeSubRoute.match, {
+            onBack: () => onNavigate(basePath),
+          }),
       });
     }
     return base;
   });
 
-  // Transition state ported directly from BaptisteApp
+  // Action determines visual transition state:
   // 'idle' | 'push-init' | 'push-active' | 'pop-init' | 'pop-active' | 'swipe' | 'swipe-cancel' | 'swipe-pop'
   const [action, setAction] = useState('idle');
   const [swipeDx, setSwipeDx] = useState(0);
@@ -67,44 +91,45 @@ export default function AnimatedRoutes() {
   const lockRef = useRef(false);
   const swipeRef = useRef({ active: false, startX: 0, startY: 0, startTime: 0 });
   const swipedPopRef = useRef(false);
-  const prevPathRef = useRef(location.pathname);
 
-  // Synchronize stack with route changes
+  // Sync stack when URL changes
   useEffect(() => {
-    const prevPath = prevPathRef.current;
-    const currentPath = location.pathname;
-    prevPathRef.current = currentPath;
+    // If the path does not belong to this tab, DO NOT touch this tab's stack!
+    // This achieves 100% native iOS state preservation across tab switches.
+    if (!currentPath.startsWith(basePath)) {
+      return;
+    }
 
-    // If swipe-pop just navigated back, skip programmatic pop animation
+    // Skip if programmatic navigation was triggered by a gesture swipe-pop
     if (swipedPopRef.current) {
       swipedPopRef.current = false;
       return;
     }
 
-    if (currentPath.startsWith('/sons/') && currentPath !== '/sons') {
-      const categoryId = currentPath.replace('/sons/', '');
+    if (activeSubRoute) {
       const currentTop = stack[stack.length - 1];
 
-      if (currentTop?.type === 'sound-list' && currentTop?.categoryId === categoryId) {
+      // If this screen is already on top of the stack, DO NOT replay animation!
+      if (currentTop?.key === activeSubRoute.key) {
         return;
       }
 
+      // PUSH NEW SCREEN
       lockRef.current = true;
       const newScreen = {
-        key: `sound-list-${categoryId}`,
-        type: 'sound-list',
-        categoryId,
-        path: currentPath,
+        key: activeSubRoute.key,
+        type: 'sub',
+        render: () =>
+          activeSubRoute.route.render(activeSubRoute.match, {
+            onBack: () => onNavigate(basePath),
+          }),
       };
 
-      // 1. Add to stack immediately
-      setStack((s) => [...s.filter((item) => item.type === 'tabs'), newScreen]);
-      // 2. Start in 'push-init' (new screen mounted off-screen right)
+      setStack((s) => [...s.filter((item) => item.type === 'root'), newScreen]);
       setAction('push-init');
 
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          // 3. Trigger transition to slide in
           setAction('push-active');
           setTimeout(() => {
             setAction('idle');
@@ -112,8 +137,8 @@ export default function AnimatedRoutes() {
           }, ANIM_MS + 20);
         });
       });
-    } else if (stack.length > 1) {
-      // 1. Keep stack as is, trigger pop transition
+    } else if (currentPath === basePath && stack.length > 1) {
+      // POP BACK TO ROOT
       lockRef.current = true;
       setAction('pop-init');
 
@@ -121,7 +146,6 @@ export default function AnimatedRoutes() {
         requestAnimationFrame(() => {
           setAction('pop-active');
           setTimeout(() => {
-            // 2. Only remove from stack after animation completes
             setStack((s) => s.slice(0, 1));
             setAction('idle');
             lockRef.current = false;
@@ -129,7 +153,7 @@ export default function AnimatedRoutes() {
         });
       });
     }
-  }, [location.pathname, stack]);
+  }, [currentPath, basePath, activeSubRoute, stack, onNavigate]);
 
   // --- INTERACTIVE iOS EDGE-SWIPE GESTURE LOGIC (BaptisteApp) ---
   const handleTouchStart = (e) => {
@@ -181,7 +205,7 @@ export default function AnimatedRoutes() {
           setAction('idle');
           setSwipeDx(0);
           lockRef.current = false;
-          navigate('/sons');
+          onNavigate(basePath);
         }, 300);
       } else {
         setAction('swipe-cancel');
@@ -194,39 +218,11 @@ export default function AnimatedRoutes() {
     }
   };
 
-  // Helper to render screen content
-  const renderScreen = (item) => {
-    if (item.type === 'tabs') {
-      return (
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-          <NativeTab isActive={currentTabBase === '/'}>
-            <HomePage isActive={currentTabBase === '/'} />
-          </NativeTab>
-          <NativeTab isActive={currentTabBase === '/sons'}>
-            <SoundsPage isActive={currentTabBase === '/sons'} />
-          </NativeTab>
-          <NativeTab isActive={currentTabBase === '/options'}>
-            <OptionsPage isActive={currentTabBase === '/options'} />
-          </NativeTab>
-          <NativeTab isActive={currentTabBase === '/contact'}>
-            <ContactPage isActive={currentTabBase === '/contact'} />
-          </NativeTab>
-        </div>
-      );
-    }
-
-    if (item.type === 'sound-list') {
-      return <SoundListPage categoryId={item.categoryId} />;
-    }
-
-    return null;
-  };
-
   const screenW = typeof window !== 'undefined' ? window.innerWidth : 400;
 
   return (
     <div
-      className="app-root-nav"
+      className="tab-stack-container"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -284,7 +280,7 @@ export default function AnimatedRoutes() {
 
         return (
           <div
-            key={item.key || index}
+            key={item.key}
             className="nav-screen"
             style={{
               position: 'absolute',
@@ -295,10 +291,77 @@ export default function AnimatedRoutes() {
               boxShadow,
             }}
           >
-            {renderScreen(item)}
+            {item.type === 'root' ? (
+              <div className="native-tab-pane__scroll">
+                <RootComponent />
+              </div>
+            ) : (
+              item.render()
+            )}
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * AnimatedRoutes — Main Native Tab Controller
+ * Each tab preserves 100% of its scroll and state.
+ * Any tab can hold its own stack without interfering with others.
+ */
+export default function AnimatedRoutes() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Extract base tab from location (e.g. "/sons" from "/sons/humour")
+  const segments = location.pathname.split('/').filter(Boolean);
+  const currentTabBase = segments.length > 0 ? `/${segments[0]}` : '/';
+
+  return (
+    <div className="app-root-nav">
+      {/* Tab 0: Accueil */}
+      <NativeTabPane isActive={currentTabBase === '/'}>
+        <div className="native-tab-pane__scroll">
+          <HomePage />
+        </div>
+      </NativeTabPane>
+
+      {/* Tab 1: Sons (with BaptisteApp-style stack navigation!) */}
+      <NativeTabPane isActive={currentTabBase === '/sons'}>
+        <TabStackView
+          basePath="/sons"
+          currentPath={location.pathname}
+          rootComponent={SoundsPage}
+          onNavigate={navigate}
+          subRoutes={[
+            {
+              pattern: /^\/sons\/(.+)$/,
+              render: (match, handlers) => (
+                <SoundListPage
+                  categoryId={match[1]}
+                  onBack={handlers.onBack}
+                />
+              ),
+              getKey: (match) => `sound-list-${match[1]}`,
+            },
+          ]}
+        />
+      </NativeTabPane>
+
+      {/* Tab 2: Options */}
+      <NativeTabPane isActive={currentTabBase === '/options'}>
+        <div className="native-tab-pane__scroll">
+          <OptionsPage />
+        </div>
+      </NativeTabPane>
+
+      {/* Tab 3: Contact */}
+      <NativeTabPane isActive={currentTabBase === '/contact'}>
+        <div className="native-tab-pane__scroll">
+          <ContactPage />
+        </div>
+      </NativeTabPane>
     </div>
   );
 }

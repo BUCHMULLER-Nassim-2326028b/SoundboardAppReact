@@ -8,17 +8,14 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  background: rgba(1, 12, 34, 0.88);
+  background: rgba(1, 12, 34, 0.92);
   backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px) saturate(180%);
-  padding-top: max(1.2rem, env(safe-area-inset-top, 1.5rem));
-  padding-left: max(1rem, env(safe-area-inset-left, 1rem));
-  padding-right: max(1rem, env(safe-area-inset-right, 1rem));
-  padding-bottom: calc(75px + max(1.5rem, env(safe-area-inset-bottom, 1rem)));
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
+  padding: 0;
 }
 
 /* Legacy Modal Overlay fallback */

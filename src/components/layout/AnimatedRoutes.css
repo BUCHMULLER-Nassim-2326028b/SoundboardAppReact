@@ -9,6 +9,34 @@
   height: 100%;
   overflow: hidden;
   background: transparent;
+}
+
+.native-tab-pane {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Individual tab scroll container when not stacked */
+.native-tab-pane__scroll {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Stack container per tab */
+.tab-stack-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   touch-action: pan-y;
 }
 
@@ -19,15 +47,4 @@
   height: 100%;
   overflow: hidden;
   will-change: transform;
-}
-
-.native-tab-pane {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
 }
