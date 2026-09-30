@@ -7,10 +7,21 @@
   flex-direction: column;
   align-items: center;
   min-height: 100%;
+  gap: 1.15rem;
+}
+
+.options-page .page-header {
+  margin-bottom: 0.15rem;
+  width: 100%;
+  text-align: center;
 }
 
 /* Section Groups */
 .options-group {
+  width: 100%;
+}
+
+.options-footer {
   width: 100%;
 }
 

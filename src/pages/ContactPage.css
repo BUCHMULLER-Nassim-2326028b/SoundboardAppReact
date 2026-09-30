@@ -5,12 +5,19 @@
 .contact-page {
   display: flex;
   flex-direction: column;
+  min-height: 100%;
+  gap: 1.2rem;
+}
+
+.contact-page .page-header {
+  margin-bottom: 0.15rem;
+  text-align: center;
 }
 
 .contact-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: 0.5rem;
 }
 
 .contact-section__title {
@@ -112,7 +119,7 @@
 /* Footer */
 .contact-footer {
   text-align: center;
-  padding: var(--space-xl) 0 var(--space-md);
+  padding: 0.5rem 0 0;
   display: flex;
   flex-direction: column;
   gap: 4px;

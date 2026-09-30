@@ -9,6 +9,10 @@
   min-height: 100%;
 }
 
+.sounds-page .page-header {
+  margin-bottom: 0.85rem;
+}
+
 
 /* Top Featured Card Section */
 .sounds-featured-section {
